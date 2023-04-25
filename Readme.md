@@ -1,5 +1,5 @@
 # Grants
-Grants is help startup to build community grant.
+Grants is a platform to help startup to build their community grant.
 
 ## Authentication
 
