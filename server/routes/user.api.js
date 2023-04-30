@@ -1,17 +1,19 @@
 const express = require("express");
 const router = express.Router();
-const userController = require("../controllers/user.controller");
+const userController = require("../controllers/user.controller")
 const { body } = require("express-validator");
-const { authentication } = require("../middlewares/authentication");
+const  authentication = require("../middlewares/authentication");
+const  validators  = require("../middlewares/validators");
 
-```
+
+
 /**
 @route POST /register
 @description Register new user
 @body { name, email, password, user role }
 @access public
 */
-```
+
 
 router.post('/',
   validators.validate([
@@ -24,5 +26,10 @@ router.post('/',
     body("role", "Invalid role").notEmpty()
   ]),
   userController.register
-)
+);
 
+// router.get('/:id/verify/:verifyCode',
+//   userController.verifyEmail
+// );
+
+module.exports = router;

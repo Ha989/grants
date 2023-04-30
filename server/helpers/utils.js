@@ -9,6 +9,9 @@ utilsHelper.sendResponse = (res, status, success, data, errors, message) => {
     return res.status(status).json(response);
   };
 
+  utilsHelper.catchAsync = (func) => (req, res, next) => 
+    func(req, res, next).catch((error) => next(error));
+
   class AppError extends Error {
     constructor(statusCode, message, errorType) {
       super(message);
