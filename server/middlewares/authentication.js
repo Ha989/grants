@@ -10,28 +10,35 @@ authentication.loginRequired = (req, res, next) => {
 
     try {
 
-    const authHeader = req.headers.authorization;
-    if (!authHeader) throw new AppError(401, "Login Required", "Authentication Error");
+    const tokenString = req.headers.authorization;
+    if (!tokenString) throw new AppError(401, "Login Required", "Authentication Error");
     
-    const token = authHeader.replace("Bearer", "");
+    const token = tokenString.replace("Bearer ", "");
+
+    jwt.verify(token, JWT_SECRET_KEY, (err, payload) => {
+        if (err) {
+          if (err.name === "TokenExpiredError") {
+            throw new AppError("401", "Token Expired", "Authentication Error");
+          } else {
+            throw new AppError("401", "Token is invalid", "Authentication Error");
+          }
+        }
+        req.userId = payload._id;
+
+      });
+  
+      next();
     // check is user in our data.
     // when user login successfully backend will create a token in header of res. in the token will have all data of user. 
     // user dont need to login again, when make req to backend, backend can check token is correct so it is correct user.
     // token can be revoke. Delete token.   
     // expire time for token. 
-    const  decodedToken = jwt.verify(token, JWT_SECRET_KEY); 
-    if (error) throw new AppError(401, "Unauthorized");
       
     // Check if user role matches the required role for the route
     //user
     //creator
     //admin
-    if (req.route.role !== decodedToken.role) {
-        throw new AppError(403, "Forbidden");
-    }
     
-    req.user = decodedToken;
-    next()
 } catch (error) {
     next(error)
 }

@@ -1,35 +1,27 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/user.controller")
-const { body } = require("express-validator");
+const { param, body } = require("express-validator");
 const  authentication = require("../middlewares/authentication");
-const  validators  = require("../middlewares/validators");
+const validators = require("../middlewares/validators");
 
-
+router.get("/me", authentication.loginRequired, userController.getCurrentUser);
 
 /**
-@route POST /register
-@description Register new user
-@body { name, email, password, user role }
-@access public
+@route PUT /settings/:userId
+@description Update user profile avatar, bio, name
+@body { name, bio, avatarUrl }
+@access private
 */
 
-
-router.post('/',
+router.put("/settings/:userId", 
+authentication.loginRequired,
   validators.validate([
-    body("name", "Invalid name").exists().notEmpty(),
-    body("email", "Invalid email")
-    .exists()
-    .isEmail()
-    .normalizeEmail({ gmail_remove_dots: false }),
-    body("password", "Invalid password").exists().notEmpty(),
-    body("role", "Invalid role").notEmpty()
+    param("userId").exists().isString().custom(validators.checkObjectId)
   ]),
-  userController.register
+  userController.updateProfile
 );
 
-// router.get('/:id/verify/:verifyCode',
-//   userController.verifyEmail
-// );
+
 
 module.exports = router;

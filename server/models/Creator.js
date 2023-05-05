@@ -21,6 +21,14 @@ const creatorSchema = Schema({
         default: 'creator',
         require: true
     },
+    avatarUrl: {
+        type: String,
+        default: null
+    },
+    bio: {
+        type: String,
+        default: ""
+    },
     projects: [{
         type: Schema.Types.ObjectId,
         ref: "projects",

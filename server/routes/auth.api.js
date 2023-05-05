@@ -23,12 +23,19 @@ router.post("/register", validators.validate([
 ]),
   authController.register
 );
+
+router.get("/:id/verify/:code",
+  authController.verifyEmail
+);
+
+
 /**
 @route POST auth/login
 @description Login with email and password
 @body { email, password }
 @access public
 */
+
 
 router.post("/login", validators.validate([
     body("email", "Invalid Email")
@@ -40,8 +47,4 @@ router.post("/login", validators.validate([
   authController.loginwithEmail
 );
 
-
-router.get("/:id/verify/:code",
-  authController.verifyEmail
-);
 module.exports = router;

@@ -33,8 +33,6 @@ authController.register = catchAsync(async(req, res, next) => {
      url = `${process.env.BASE_URL}auth/${user._id}/verify/${verified.code}`;
 
      await emailVerification.sendVerificationEmail(user.email, "Verify Your Email", url);
-
-     await sendResponse (res, 200, true, { url, verified }, null, "Verification link has sent to your email");
     } 
     if (role === 'creator') {
         creator = await Creator.create({ name, email, password, role });
@@ -47,9 +45,9 @@ authController.register = catchAsync(async(req, res, next) => {
     
          await emailVerification.sendVerificationEmail(creator.email, "Verify Your Email", url);
     
-         await sendResponse (res, 200, true, { url, verified }, null, "Verification link has sent to your email");
-    }
-    
+        }
+        await sendResponse (res, 200, true, { url, verified }, null, "Verification link has sent to your email");
+        
     await sendResponse (res, 200, true, { user, creator }, null, "Register Successfully");
 
 });
@@ -57,13 +55,10 @@ authController.register = catchAsync(async(req, res, next) => {
 
 authController.verifyEmail = catchAsync(async (req, res, next) => {
         const  verified = req.params.code;
-        console.log("code", verified)
-
         const  userId = req.params.id;
-
-        console.log("user", userId)
       
         const user = await User.find({_id: userId}, {"isDeleted": false});
+        const creator = await Creator.find({_id: userId}, {"isDeleted": false});
         
         if (!user) throw new AppError(400, "Invalid user");
         
@@ -71,17 +66,26 @@ authController.verifyEmail = catchAsync(async (req, res, next) => {
 
         if (!verifiedcode) throw new AppError(400, "Invalid verification link");
         
-        await User.updateOne({ _id: userId },  {"isVerified": true });
+        if (user) {
+        await User.updateOne({ _id: userId },  {isVerified: true });
+        }
 
+        if (creator) {
+            await Creator.updateOne({ _id: userId }, {isVerified: true });
         
-        sendResponse(res, 200, true, { user, verifiedcode }, null, "Email verified successfully")
+        }
+               
+       sendResponse(res, 200, true, { verifiedcode }, null, "Email verified successfully" );
   
-})
+});
+
 
 authController.loginwithEmail = catchAsync(async(req, res, next) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email }, "+password");
+    console.log("user", user)
     const creator = await Creator.findOne({ email }, "+password");
+    console.log("creator", creator)
     if (!creator && !user ) throw new AppError(400, "Invalid User", "Login Error");
     
         let isMatch;
@@ -101,9 +105,8 @@ authController.loginwithEmail = catchAsync(async(req, res, next) => {
         }
             accessToken = await user.generateToken();
         }
-      
+        sendResponse(res, 200, true, { user, creator, accessToken }, null, "Login successful");
 
-    sendResponse(res, 200, true, { user, creator, accessToken }, null, "Login successful");
 });
 
 

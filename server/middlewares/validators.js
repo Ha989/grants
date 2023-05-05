@@ -25,12 +25,9 @@ validators.checkObjectId = (paramId) => {
 };
 
 // check role of user or admin or creator
-validators.checkRole = (role) => {
-    if (req.user && req.user.role === role ) {
-       return next(); // authorized
-    } else {
-       return sendResponse(res, 403, false, null, { message }, "Forbidden"); // unauthorized
-    }
+validators.checkRole = (req, role) => {
+    if (req.user && req.user.role !== role ) 
+     throw new Error("Forbidden");      
 }
 
 module.exports = validators;

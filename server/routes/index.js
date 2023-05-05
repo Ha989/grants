@@ -11,12 +11,12 @@ const authApi = require('./auth.api');
 router.use("/auth", authApi);
 
 // user.api
-// const userApi = require('./user.api');
-// router.use("/user", userApi);
+const userApi = require('./user.api');
+router.use("/user", userApi);
 
 // creator.api
-// const creatorApi = require('./creator.api');
-// router.use("/creator", creatorApi);
+const creatorApi = require('./creator.api');
+router.use("/creator", creatorApi);
 
 // admin.api
 // const adminApi = require('./admin.api');

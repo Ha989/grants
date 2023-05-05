@@ -22,6 +22,14 @@ const userSchema = Schema({
         default: 'user',
         require: true
     },
+    avatarUrl: {
+        type: String,
+        default: null
+    },
+    bio: {
+        type: String,
+        default: ""
+    },
     bookmarked: [{
         type: Schema.Types.ObjectId,
         ref: "projects",
