@@ -17,6 +17,7 @@ creatorController.getCurrentCreator = catchAsync(async(req, res, next) => {
 
 
 
+
 // update creator profile
 
 creatorController.updateProfile = catchAsync(async(req, res, next) => {
@@ -38,7 +39,7 @@ creatorController.updateProfile = catchAsync(async(req, res, next) => {
   await creator.save();
 
   return sendResponse(res, 200, true, { creator }, null, "Update profile successful" )
-})
+});
 
 
 
@@ -46,16 +47,17 @@ creatorController.updateProfile = catchAsync(async(req, res, next) => {
 creatorController.createProject = catchAsync(async(req, res, next) => {
 
     const creatorId = req.params.creatorId;
-    const { name, description } = req.body;
-
+    const { name, description, website, team, logo, banner, bankDetail } = req.body;
+    console.log("info", req.body)
     const creator = await Creator.findById(creatorId);
     if (!creator) throw new AppError(400, "Creator not found", "Create project error");
 
-    const project = await Project.create({ name, description, creator: creatorId });
+    const project = await Project.create({ name, description, website, team, logo, banner, bankDetail, creator: creatorId });
     creator.projects.push(project);
     await creator.save();
     sendResponse(res, 200, true, { project }, null, "Create project successful")
 });
+
 
 
 // update project detail
@@ -75,18 +77,28 @@ creatorController.updateProject = catchAsync(async(req, res, next) => {
 
     if (project.creator.toString() !== currentCreatorId) throw new AppError(403, "You are not authorized to update this project");
 
-    const allowField = [ "name", "description", "team", "logo", "banner", "socialLink", "bankDetail" ];
+    const allowField = [ "name", "description", "team", "logo", "banner", "website", "bankDetail" ];
     
-    allowField.forEach((field) => {
-        if (req.body[field] !== undefined) {
-          project[field] = req.body[field];
+    let filteredBody = {};
+         allowField.forEach((field) => {
+         if (req.body.hasOwnProperty(field)) {
+         filteredBody[field] = req.body[field];
         }
       });
-      await project.save();
+      if(Object.keys(req.body).includes("team")) {
+        const currentTeam = project.team;
+        const newTeam = [...currentTeam, req.body.team];
+
+        filteredBody = {...req.body, team: newTeam}
+      };
+
+      await project.updateOne(filteredBody);
 
       return sendResponse(res, 200, true, { project }, null, "Update profile successful" )
 
-})
+});
+
+
 
 // delete project
 
@@ -114,7 +126,7 @@ creatorController.deleteProject = catchAsync(async(req, res, next) => {
 
     sendResponse(res, 200, true, { updatedCreator, deletedProject }, null, "Delete project successful")
 
-})
+});
 
 
 module.exports = creatorController;

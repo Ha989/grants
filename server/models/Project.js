@@ -8,7 +8,7 @@ const projectSchema = Schema({
     },
     logo: {
         type: String,
-        require: true
+        default: null
     },
     description: {
         type: String,
@@ -16,18 +16,16 @@ const projectSchema = Schema({
     },
     banner: {
         type: String,
-        require: true
+        default: null
     },
     team: {
         type: [],
         default: null
     },
-    socialLink: [
-        {
-            platform: String,
-            link: String
-        }
-    ],
+    website: {
+        type: String,
+        require: true
+    },
     creator: {
         type: Schema.Types.ObjectId,
         ref: "creators",
@@ -35,7 +33,7 @@ const projectSchema = Schema({
     },
     bankDetail: {
         type: String,
-        require: true
+        default: null
     },
     donationIds: {
         type: Schema.Types.ObjectId,
