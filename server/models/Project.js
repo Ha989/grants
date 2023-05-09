@@ -35,20 +35,20 @@ const projectSchema = Schema({
         type: String,
         default: null
     },
-    donationIds: {
+    donations: [{
         type: Schema.Types.ObjectId,
         ref: "donations",
         default: null
-    },
-    userBookmarked: {
+    }],
+    userBookmarked: [{
         type: Schema.Types.ObjectId,
         ref: "users"
-    },
-    comments: {
+    }],
+    comments: [{
         type: Schema.Types.ObjectId,
         ref: "comments",
         default: null
-    },
+    }],
     isAccepted: {
         type: Boolean,
         default: false

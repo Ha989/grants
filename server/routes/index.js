@@ -18,6 +18,10 @@ router.use("/user", userApi);
 const creatorApi = require('./creator.api');
 router.use("/creator", creatorApi);
 
+// project.api
+const projectApi = require('./project.api');
+router.use("/project", projectApi);
+
 // admin.api
 // const adminApi = require('./admin.api');
 // router.use("/admin", adminApi);

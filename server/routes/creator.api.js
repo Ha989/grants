@@ -79,6 +79,20 @@ creatorController.deleteProject
 
 
 
+/**
+@route POST /creator/donation/:donationId
+@description confirm money received from user
+@body { status: pending or received }
+@access Login required
+*/
+
+router.put("/donation/:donationId", 
+authentication.loginRequired,
+validators.validate([
+  param("donationId").exists().isString().custom(validators.checkObjectId)
+]),
+creatorController.confirmDonation
+);
 
 
 

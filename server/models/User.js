@@ -35,7 +35,7 @@ const userSchema = Schema({
         ref: "projects",
         default: null
     }],
-    donated_project: [{
+    donations: [{
         type: Schema.Types.ObjectId,
         ref: "donation",
         default: null
