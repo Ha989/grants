@@ -6,6 +6,10 @@ const projectSchema = Schema({
         type: String,
         require: true
     },
+    title: {
+        type: String,
+        require: true
+    },
     logo: {
         type: String,
         default: null
@@ -33,6 +37,14 @@ const projectSchema = Schema({
     },
     bankDetail: {
         type: String,
+        default: null
+    },
+    currentRaised: {
+        type: Number,
+        default: 0
+    },
+    investor: {
+        type: [String],
         default: null
     },
     donations: [{

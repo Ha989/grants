@@ -49,18 +49,19 @@ creatorController.updateProfile = catchAsync(async (req, res, next) => {
   );
 });
 
+
 // create project
 creatorController.createProject = catchAsync(async (req, res, next) => {
   const creatorId = req.params.creatorId;
-  const { name, description, website, team, logo, banner, bankDetail } =
+  const { name, title, description, website, team, logo, banner, bankDetail } =
     req.body;
-  console.log("info", req.body);
   const creator = await Creator.findById(creatorId);
   if (!creator)
     throw new AppError(400, "Creator not found", "Create project error");
 
   const project = await Project.create({
     name,
+    title,
     description,
     website,
     team,
@@ -95,6 +96,7 @@ creatorController.updateProject = catchAsync(async (req, res, next) => {
 
   const allowField = [
     "name",
+    "title",
     "description",
     "team",
     "logo",
@@ -189,8 +191,30 @@ creatorController.confirmDonation = catchAsync(async(req, res, next) => {
     if (project.creator.toString() !== creatorId) throw new AppError(403, "Forbidden") 
 
     donation.isConfirm = true;
-    await donation.save() 
-    return sendResponse(res, 200, true, { donation }, null, "Confirm success")
+    await donation.save();
+    project.currentRaised += donation.amount;
+    await project.save();
+
+    return sendResponse(res, 200, true, { donation, project }, null, "Confirm success")
+});
+
+
+// get all donations which belong to the projects of creator who is authorization
+
+creatorController.getDonationByProjectCreator = catchAsync(async(req, res, next) => {
+   const creatorId = req.userId;
+
+   let creator = await Creator.findById(creatorId);
+   if (!creator) throw new AppError(400, "Creator not found", "Get donations list error");
+
+   const projects = await Project.find({ creator: creatorId });
+   if (!projects) throw new AppError(403, "Unauthorized");
+
+   const projectIds = projects.map(project => project._id);
+
+   const donations = await Donation.find({ projectId: { $in: projectIds } }).populate('projectId');
+
+   return sendResponse(res, 200, true, { donations }, null, "Get donations successful")
 });
 
 

@@ -95,6 +95,15 @@ creatorController.confirmDonation
 );
 
 
+/**
+@route GET /creator/donation
+@description get all donations
+@body { isConfirm: true or false }
+@access Login required
+*/
+
+
+router.get("/donation", authentication.loginRequired, creatorController.getDonationByProjectCreator);
 
 
 

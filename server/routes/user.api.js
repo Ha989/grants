@@ -5,13 +5,22 @@ const { param, body } = require("express-validator");
 const  authentication = require("../middlewares/authentication");
 const validators = require("../middlewares/validators");
 
+/**
+@route GET /me
+@description get current user
+@body
+@access login Required
+*/
+
 router.get("/me", authentication.loginRequired, userController.getCurrentUser);
+
+
 
 /**
 @route PUT /settings/:userId
 @description Update user profile avatar, bio, name
 @body { name, bio, avatarUrl }
-@access private
+@access Login Required
 */
 
 router.put("/settings/:userId", 
@@ -21,6 +30,16 @@ authentication.loginRequired,
   ]),
   userController.updateProfile
 );
+
+
+/**
+@route GET /donation
+@description get list of donations of user
+@body 
+@access Login Required
+*/
+
+router.get("/donation", authentication.loginRequired, userController.getDonationsOfUser);
 
 
 
