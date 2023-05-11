@@ -56,6 +56,10 @@ const projectSchema = Schema({
         type: Schema.Types.ObjectId,
         ref: "users"
     }],
+    totalBookmarks: {
+        type: Number,
+        default: 0
+    },
     comments: [{
         type: Schema.Types.ObjectId,
         ref: "comments",

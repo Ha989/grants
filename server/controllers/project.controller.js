@@ -69,4 +69,45 @@ projectController.createDonation = catchAsync(async(req, res, next) => {
 });
 
 
+// bookmark and remove bookmark
+
+projectController.bookmarkProject = catchAsync(async(req, res, next) => {
+  const userId = req.userId;
+  const projectId = req.params.projectId;
+  
+  console.log("user", userId)
+  const user = await User.findById(userId);
+  if (!user) throw new AppError(400, "User not found", "Bookmark error");
+ 
+
+ let project = await Project.findById(projectId);
+  if (!project) throw new AppError(400, "Project not found", "Bookmark error");
+  
+ const index = user.bookmarked.indexOf(projectId);
+ const options = { new: true };
+  if (index === -1 ) {
+  user.bookmarked.push(projectId);
+  user.save();
+  
+  project = await Project.findByIdAndUpdate(projectId, {
+    $addToSet: { userBookmarked: userId},
+    $inc : { totalBookmarks: 1 }
+  }, options).populate('userBookmarked');
+
+  return sendResponse(res, 200, true, { user, totalBookmarks: project.totalBookmarks }, null, "Bookmark successful");
+ } else {
+  user.bookmarked.splice(index, 1);
+  await user.save();
+
+  project = await Project.findByIdAndUpdate(projectId, {
+    $pull: { userBookmarked: userId },
+    $inc: { totalBookmarks: -1 }
+  }, options).populate('userBookmarked');
+
+  return sendResponse(res, 200, true, { user, totalBookmarks: project.totalBookmarks }, null, "Remove bookmark successful")
+ }
+
+});
+
+
 module.exports = projectController;

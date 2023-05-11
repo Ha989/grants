@@ -47,5 +47,19 @@ projectController.createDonation
 );
 
 
+/**
+@route PUT /:projectId/bookmark
+@description user can bookmark and remove bookmark
+@body
+@access Login required
+*/
+
+router.put("/:projectId/bookmark", 
+authentication.loginRequired,
+validators.validate([
+   param("projectId").exists().isString().custom(validators.checkObjectId) 
+]),
+projectController.bookmarkProject)
+
 module.exports = router;
 
