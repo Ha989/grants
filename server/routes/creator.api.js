@@ -49,7 +49,7 @@ creatorController.createProject
 
 /**
 @route PUT /project/:projectId
-@description create project
+@description update project
 @body { name, description, ... }
 @access Login required
  */
@@ -80,7 +80,7 @@ creatorController.deleteProject
 
 
 /**
-@route POST /creator/donation/:donationId
+@route POST /donation/:donationId
 @description confirm money received from user
 @body { status: pending or received }
 @access Login required

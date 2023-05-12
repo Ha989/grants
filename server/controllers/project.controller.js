@@ -29,85 +29,150 @@ projectController.getListProject = catchAsync(async (req, res, next) => {
   );
 });
 
-
 // get single project
 
-projectController.getSingleProject = catchAsync(async(req, res, next) => {
-    const projectId = req.params.projectId;
-    
-    const singleProject = await Project.findById(projectId);
-    if (!singleProject) throw new AppError(400, "Project not found", "Get single project detail error");
+projectController.getSingleProject = catchAsync(async (req, res, next) => {
+  const projectId = req.params.projectId;
 
-    return sendResponse(res, 200, true, singleProject, null, "Get single Project successful");
+  const singleProject = await Project.findById(projectId);
+  if (!singleProject)
+    throw new AppError(
+      400,
+      "Project not found",
+      "Get single project detail error"
+    );
+
+  return sendResponse(
+    res,
+    200,
+    true,
+    singleProject,
+    null,
+    "Get single Project successful"
+  );
 });
-
-
 
 // donation project
 
-projectController.createDonation = catchAsync(async(req, res, next) => {
-    const { projectId, userId } = req.params;
-    const { amount } = req.body;
+projectController.createDonation = catchAsync(async (req, res, next) => {
+  const { projectId, userId } = req.params;
+  const { amount } = req.body;
 
-    let user = await User.findById(userId);
-    if (!user) throw new AppError(400, "user not found", "create donation error");
-    
-    let project = await Project.findById(projectId);
+  let user = await User.findById(userId);
+  if (!user) throw new AppError(400, "user not found", "create donation error");
 
-    if (!project) throw new AppError(400, "project not found", "create donation error");
-    
-    const donation = await Donation.create({ projectId: projectId, userId: userId, amount: amount});
+  let project = await Project.findById(projectId);
 
-    user.donations.push(donation);
-    await user.save();
+  if (!project)
+    throw new AppError(400, "project not found", "create donation error");
 
-    project.donations.push(donation);
-    await project.save();
+  const donation = await Donation.create({
+    projectId: projectId,
+    userId: userId,
+    amount: amount,
+  });
 
-    return sendResponse(res, 200, true, { donation, project, user }, null, "Create donation successful" )
-    
+  user.donations.push(donation);
+  await user.save();
+
+  project.donations.push(donation);
+  await project.save();
+
+  return sendResponse(
+    res,
+    200,
+    true,
+    { donation, project, user },
+    null,
+    "Create donation successful"
+  );
 });
-
 
 // bookmark and remove bookmark
 
-projectController.bookmarkProject = catchAsync(async(req, res, next) => {
+projectController.bookmarkProject = catchAsync(async (req, res, next) => {
   const userId = req.userId;
   const projectId = req.params.projectId;
-  
-  console.log("user", userId)
+
+  console.log("user", userId);
   const user = await User.findById(userId);
   if (!user) throw new AppError(400, "User not found", "Bookmark error");
- 
 
- let project = await Project.findById(projectId);
+  let project = await Project.findById(projectId);
   if (!project) throw new AppError(400, "Project not found", "Bookmark error");
-  
- const index = user.bookmarked.indexOf(projectId);
- const options = { new: true };
-  if (index === -1 ) {
-  user.bookmarked.push(projectId);
-  user.save();
-  
-  project = await Project.findByIdAndUpdate(projectId, {
-    $addToSet: { userBookmarked: userId},
-    $inc : { totalBookmarks: 1 }
-  }, options).populate('userBookmarked');
 
-  return sendResponse(res, 200, true, { user, totalBookmarks: project.totalBookmarks }, null, "Bookmark successful");
- } else {
-  user.bookmarked.splice(index, 1);
-  await user.save();
+  const index = user.bookmarked.indexOf(projectId);
+  const options = { new: true };
+  if (index === -1) {
+    user.bookmarked.push(projectId);
+    user.save();
 
-  project = await Project.findByIdAndUpdate(projectId, {
-    $pull: { userBookmarked: userId },
-    $inc: { totalBookmarks: -1 }
-  }, options).populate('userBookmarked');
+    project = await Project.findByIdAndUpdate(
+      projectId,
+      {
+        $addToSet: { userBookmarked: userId },
+        $inc: { totalBookmarks: 1 },
+      },
+      options
+    ).populate("userBookmarked");
 
-  return sendResponse(res, 200, true, { user, totalBookmarks: project.totalBookmarks }, null, "Remove bookmark successful")
- }
+    return sendResponse(
+      res,
+      200,
+      true,
+      { user, totalBookmarks: project.totalBookmarks },
+      null,
+      "Bookmark successful"
+    );
+  } else {
+    user.bookmarked.splice(index, 1);
+    await user.save();
 
+    project = await Project.findByIdAndUpdate(
+      projectId,
+      {
+        $pull: { userBookmarked: userId },
+        $inc: { totalBookmarks: -1 },
+      },
+      options
+    ).populate("userBookmarked");
+
+    return sendResponse(
+      res,
+      200,
+      true,
+      { user, totalBookmarks: project.totalBookmarks },
+      null,
+      "Remove bookmark successful"
+    );
+  }
 });
+
+
+// get all comments of project
+
+
+projectController.getCommentOfProject = catchAsync(async(req, res, next) => {
+  const projectId = req.params.projectId;
+  
+  const project = await Project.findById(projectId, { isDeleted: false })
+   .populate({ path: 'comments', 
+      populate: [
+        { path: 'author', select: 'name' },
+        {
+          path: 'replies',
+          populate: { path: 'author', select: 'name' },
+        },
+      ]
+   }).exec();
+
+  if (!project) throw new AppError(400, "Project not found");
+   
+  return sendResponse(res, 200, true, project.comments, null, "Get all comments successful");
+   
+});
+
+
 
 
 module.exports = projectController;

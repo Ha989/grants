@@ -7,7 +7,7 @@ const validators = require("../middlewares/validators");
 
 
 /**
-@route GET /projects
+@route GET /project
 @description get a list of projects
 @body 
 @access public
@@ -59,7 +59,23 @@ authentication.loginRequired,
 validators.validate([
    param("projectId").exists().isString().custom(validators.checkObjectId) 
 ]),
-projectController.bookmarkProject)
+projectController.bookmarkProject);
+
+
+
+/**
+@route PUT /:projectId/comment
+@description get all comment of the project
+@body
+@access Login required
+*/
+
+router.get("/:projectId/comment", 
+authentication.loginRequired,
+validators.validate([
+   param("projectId").exists().isString().custom(validators.checkObjectId) 
+]),
+projectController.getCommentOfProject);
 
 module.exports = router;
 

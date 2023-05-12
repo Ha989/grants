@@ -22,12 +22,9 @@ router.use("/creator", creatorApi);
 const projectApi = require('./project.api');
 router.use("/project", projectApi);
 
-// admin.api
-// const adminApi = require('./admin.api');
-// router.use("/admin", adminApi);
+// commnent.api
+const commentApi = require('./comment.api');
+router.use("/comment", commentApi);
 
-// donation.api
-// const donationApi = require('./donation.api');
-// router.use("/donation", donationApi);
 
 module.exports = router;

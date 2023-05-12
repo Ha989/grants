@@ -65,6 +65,10 @@ const projectSchema = Schema({
         ref: "comments",
         default: null
     }],
+    commentCount: {
+        type: Number,
+        default: 0
+    },
     isAccepted: {
         type: Boolean,
         default: false
