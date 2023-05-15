@@ -15,7 +15,7 @@ const calculateCommentCount = async (projectId) => {
 
 commentController.createComment = catchAsync(async (req, res, next) => {
   const currentUserId = req.userId;
-  console.log("user", currentUserId);
+
   const { projectId, content, image, parentId } = req.body;
 
   let project = await Project.findById(projectId);
@@ -27,17 +27,16 @@ commentController.createComment = catchAsync(async (req, res, next) => {
     image,
     author: currentUserId,
     project: projectId,
-    parentId: parentId || null,
+    parentComment: parentId || null,
   });
-  let parentComment;
 
   // if there is a parent comment so add new comment as the reply
   if (parentId) {
-    parentComment = await Comment.findById(parentId);
-    if (!parentComment) throw new AppError(400, "Parent comment not found");
+    parentCom = await Comment.findById(parentId);
+    if (!parentCom) throw new AppError(400, "Parent comment not found");
 
-    parentComment.replies.push(comment._id);
-    await parentComment.save();
+    parentCom.replies.push(comment._id);
+    await parentCom.save();
   }
 
   // add to project
@@ -84,6 +83,8 @@ commentController.updateSingleComment = catchAsync(async (req, res, next) => {
   return sendResponse(res, 200, true, comment, null, "Update successful");
 });
 
+
+
 // delete comment
 
 commentController.deleteComment = catchAsync(async (req, res, next) => {
@@ -100,11 +101,8 @@ commentController.deleteComment = catchAsync(async (req, res, next) => {
     throw new AppError(403, "You are not authorized to perform this action");
   }
 
-  comment = await Comment.findOneAndUpdate(
-    { _id: commentId },
-    {
-      isDeleted: true,
-    }
+  comment = await Comment.findByIdAndDelete(
+    { _id: commentId }
   );
 
   const project = await Project.findByIdAndUpdate(
@@ -115,14 +113,7 @@ commentController.deleteComment = catchAsync(async (req, res, next) => {
 
   await calculateCommentCount(comment.project);
 
-  return sendResponse(
-    res,
-    200,
-    true,
-    { comment, project },
-    null,
-    "Delete successful"
-  );
+  return sendResponse(res, 200, true, { comment, project }, null, "Delete successful");
 });
 
 module.exports = commentController;

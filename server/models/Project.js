@@ -69,10 +69,6 @@ const projectSchema = Schema({
         type: Number,
         default: 0
     },
-    isAccepted: {
-        type: Boolean,
-        default: false
-    },
     isDeleted: {
         type: Boolean,
         default: false
