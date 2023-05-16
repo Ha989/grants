@@ -15,11 +15,11 @@ const notificationSchema =  Schema({
     },
     senderModal: {
         type: String,
-        enum: ["users", "projects"]
+        enum: ["users", "creators"]
     },
     recipientModel: {
         type: String,
-        enum: ["users", "projects"]
+        enum: ["users", "creators"]
     },
     type: {
         type: String,

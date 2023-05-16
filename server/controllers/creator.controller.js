@@ -2,6 +2,7 @@ const Creator = require("../models/Creator");
 const Project = require("../models/Project");
 const { sendResponse, AppError, catchAsync } = require("../helpers/utils");
 const Donation = require("../models/Donation");
+const Notification = require("../models/Notification");
 
 const creatorController = {};
 
@@ -198,7 +199,7 @@ creatorController.confirmDonation = catchAsync(async (req, res, next) => {
   await project.save();
 
   const notification = await Notification.create({
-    from: donation.projectId,
+    from: projectId.creator,
     to: donation.userId,
     type: 'donation',
     message: 'Your donation has been confirmed',

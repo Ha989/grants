@@ -73,11 +73,12 @@ projectController.createDonation = catchAsync(async (req, res, next) => {
     amount: amount,
   });
    
+ 
   const notification = await Notification.create({
-     from: donation.projectId,
-     to: donation.userId,
+     from: donation.userId,
+     to: project.creator,
      type: 'donation',
-     message: 'Your donation receipt has been confirmed',
+     message: 'You got 1 new donation, please confirm',
      donationId: donation._id
   })
   user.donations.push(donation);
