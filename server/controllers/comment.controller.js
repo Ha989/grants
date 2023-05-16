@@ -1,6 +1,8 @@
 const Comment = require("../models/Comment");
 const Project = require("../models/Project");
+const notification = require("../models/Notification");
 const { sendResponse, AppError, catchAsync } = require("../helpers/utils");
+const Notification = require("../models/Notification");
 
 const commentController = {};
 
@@ -45,13 +47,20 @@ commentController.createComment = catchAsync(async (req, res, next) => {
     { $push: { comments: comment } },
     { new: true }
   );
+ 
+  const notification = await Notification.create({
+      from: currentUserId,
+      to: projectId,
+      type: 'comment',
+      message: `${currentUserId.name} mentioned you in a comment`
+  });
 
   await calculateCommentCount(projectId);
   return sendResponse(
     res,
     200,
     true,
-    { comment, project },
+    { comment, project, notification },
     null,
     "Create comment successful"
   );

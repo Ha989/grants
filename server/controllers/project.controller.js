@@ -1,6 +1,7 @@
 const Donation = require("../models/Donation");
 const Project = require("../models/Project");
 const User = require("../models/User");
+const Notification = require("../models/Notification");
 const { sendResponse, AppError, catchAsync } = require("../helpers/utils");
 
 const projectController = {};
@@ -71,7 +72,14 @@ projectController.createDonation = catchAsync(async (req, res, next) => {
     userId: userId,
     amount: amount,
   });
-
+   
+  const notification = await Notification.create({
+     from: donation.projectId,
+     to: donation.userId,
+     type: 'donation',
+     message: 'Your donation receipt has been confirmed',
+     donationId: donation._id
+  })
   user.donations.push(donation);
   await user.save();
 
@@ -82,11 +90,12 @@ projectController.createDonation = catchAsync(async (req, res, next) => {
     res,
     200,
     true,
-    { donation, project, user },
+    { donation, project, user, notification },
     null,
     "Create donation successful"
   );
 });
+
 
 // bookmark and remove bookmark
 
@@ -94,7 +103,6 @@ projectController.bookmarkProject = catchAsync(async (req, res, next) => {
   const userId = req.userId;
   const projectId = req.params.projectId;
 
-  console.log("user", userId);
   const user = await User.findById(userId);
   if (!user) throw new AppError(400, "User not found", "Bookmark error");
 
@@ -116,11 +124,18 @@ projectController.bookmarkProject = catchAsync(async (req, res, next) => {
       options
     ).populate("userBookmarked");
 
+    const notification = await Notification.create({
+      from: userId,
+      to: projectId,
+      type: 'bookmark',
+      message: 'Your project got 1 new bookmark'
+   });
+    
     return sendResponse(
       res,
       200,
       true,
-      { user, totalBookmarks: project.totalBookmarks },
+      { user, totalBookmarks: project.totalBookmarks, notification },
       null,
       "Bookmark successful"
     );

@@ -27,4 +27,8 @@ const commentApi = require('./comment.api');
 router.use("/comment", commentApi);
 
 
+// notification.api
+const notificationApi = require('./notification.api');
+router.use("/notifications", notificationApi);
+
 module.exports = router;

@@ -49,7 +49,6 @@ creatorController.updateProfile = catchAsync(async (req, res, next) => {
   );
 });
 
-
 // create project
 creatorController.createProject = catchAsync(async (req, res, next) => {
   const creatorId = req.params.creatorId;
@@ -169,53 +168,81 @@ creatorController.deleteProject = catchAsync(async (req, res, next) => {
   );
 });
 
-
 // confirm donation
 
-creatorController.confirmDonation = catchAsync(async(req, res, next) => {
-    const creatorId = req.userId;
-    const donationId = req.params.donationId;
+creatorController.confirmDonation = catchAsync(async (req, res, next) => {
+  const creatorId = req.userId;
+  const donationId = req.params.donationId;
 
-    let creator = await Creator.findById(creatorId);
+  let creator = await Creator.findById(creatorId);
 
-    if (!creator) throw new AppError(400, "Creator not found", "Confirm donation error");
+  if (!creator)
+    throw new AppError(400, "Creator not found", "Confirm donation error");
 
-    let donation = await Donation.findById(donationId).populate('projectId');
+  let donation = await Donation.findById(donationId).populate("projectId");
 
-    if (!donation) throw new AppError(400, "Donation not found", "Confirm donation error");
-     
-    const projectId = donation.projectId;
-    const project = await Project.findById(projectId);
-    if (!project) throw new AppError(400, "Project not found", "Confirm donation error");
+  if (!donation)
+    throw new AppError(400, "Donation not found", "Confirm donation error");
 
-    if (project.creator.toString() !== creatorId) throw new AppError(403, "Forbidden") 
+  const projectId = donation.projectId;
+  const project = await Project.findById(projectId);
+  if (!project)
+    throw new AppError(400, "Project not found", "Confirm donation error");
 
-    donation.isConfirm = true;
-    await donation.save();
-    project.currentRaised += donation.amount;
-    await project.save();
+  if (project.creator.toString() !== creatorId)
+    throw new AppError(403, "Forbidden");
 
-    return sendResponse(res, 200, true, { donation, project }, null, "Confirm success")
+  donation.isConfirm = true;
+  await donation.save();
+  project.currentRaised += donation.amount;
+  await project.save();
+
+  const notification = await Notification.create({
+    from: donation.projectId,
+    to: donation.userId,
+    type: 'donation',
+    message: 'Your donation has been confirmed',
+    donationId: donationId
+ })
+
+  return sendResponse(
+    res,
+    200,
+    true,
+    { donation, project, notification },
+    null,
+    "Confirm success"
+  );
 });
-
 
 // get all donations which belong to the projects of creator who is authorization
 
-creatorController.getDonationByProjectCreator = catchAsync(async(req, res, next) => {
-   const creatorId = req.userId;
+creatorController.getDonationByProjectCreator = catchAsync(
+  async (req, res, next) => {
+    const creatorId = req.userId;
 
-   let creator = await Creator.findById(creatorId);
-   if (!creator) throw new AppError(400, "Creator not found", "Get donations list error");
+    let creator = await Creator.findById(creatorId);
+    if (!creator)
+      throw new AppError(400, "Creator not found", "Get donations list error");
 
-   const projects = await Project.find({ creator: creatorId });
-   if (!projects) throw new AppError(403, "Unauthorized");
+    const projects = await Project.find({ creator: creatorId });
+    if (!projects) throw new AppError(403, "Unauthorized");
 
-   const projectIds = projects.map(project => project._id);
+    const projectIds = projects.map((project) => project._id);
 
-   const donations = await Donation.find({ projectId: { $in: projectIds } }).populate('projectId');
+    const donations = await Donation.find({
+      projectId: { $in: projectIds },
+    }).populate("projectId");
 
-   return sendResponse(res, 200, true, { donations }, null, "Get donations successful")
-});
-
+    return sendResponse(
+      res,
+      200,
+      true,
+      { donations },
+      null,
+      "Get donations successful"
+    );
+  }
+);
 
 module.exports = creatorController;
