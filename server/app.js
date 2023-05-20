@@ -11,7 +11,7 @@ const app = express();
 
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors())
@@ -30,6 +30,12 @@ app.use('/', indexRouter);
 app.use((req, res, next) => {
     const err = new AppError(404,"Not Found","Bad Request");
     next(err);
+  });
+
+
+app.use((req, res, next) => {
+    res.header('http://localhost:3000');
+    next();
   });
 
 app.use((err, req, res, next) => {

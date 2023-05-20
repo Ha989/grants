@@ -83,13 +83,13 @@ authController.verifyEmail = catchAsync(async (req, res, next) => {
 authController.loginwithEmail = catchAsync(async(req, res, next) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email }, "+password");
-    console.log("user", user)
     const creator = await Creator.findOne({ email }, "+password");
-    console.log("creator", creator)
-    if (!creator && !user ) throw new AppError(400, "Invalid User", "Login Error");
+    // console.log("creator", creator)
+      if (!user && !creator) throw new AppError(400, "Invalid User", "Login Error");
     
-        let isMatch;
-        let accessToken;
+    let isMatch;
+    let accessToken;
+       
         if (creator) {
             isMatch = await bcrypt.compare(password, creator.password);
             if (!isMatch) {
@@ -97,16 +97,18 @@ authController.loginwithEmail = catchAsync(async(req, res, next) => {
         }
              accessToken = await creator.generateToken();
         } 
+         
 
         if (user) {
-            isMatch = await bcrypt.compare(password, user.password);
+             isMatch = await bcrypt.compare(password, user.password);
             if (!isMatch) {
             throw new AppError(400, "Wrong password", "Login Error");
+            }
+        
+             accessToken = await user.generateToken();
         }
-            accessToken = await user.generateToken();
-        }
-        sendResponse(res, 200, true, { user, creator, accessToken }, null, "Login successful");
 
+        return sendResponse(res, 200, true, { user, creator, accessToken }, null, "Login successful");
 });
 
 
