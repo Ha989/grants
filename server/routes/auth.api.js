@@ -24,7 +24,7 @@ router.post("/register", validators.validate([
   authController.register
 );
 
-router.get(":id/verify/:code",
+router.post("/:id/verify/:code",
   authController.verifyEmail
 );
 

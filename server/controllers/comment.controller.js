@@ -47,12 +47,12 @@ commentController.createComment = catchAsync(async (req, res, next) => {
     { $push: { comments: comment } },
     { new: true }
   );
- 
+
   const notification = await Notification.create({
-      from: currentUserId,
-      to: projectId,
-      type: 'comment',
-      message: `${currentUserId.name} mentioned you in a comment`
+    from: currentUserId,
+    to: projectId,
+    type: "comment",
+    message: `${currentUserId.name} mentioned you in a comment`,
   });
 
   await calculateCommentCount(projectId);
@@ -92,8 +92,6 @@ commentController.updateSingleComment = catchAsync(async (req, res, next) => {
   return sendResponse(res, 200, true, comment, null, "Update successful");
 });
 
-
-
 // delete comment
 
 commentController.deleteComment = catchAsync(async (req, res, next) => {
@@ -110,9 +108,7 @@ commentController.deleteComment = catchAsync(async (req, res, next) => {
     throw new AppError(403, "You are not authorized to perform this action");
   }
 
-  comment = await Comment.findByIdAndDelete(
-    { _id: commentId }
-  );
+  comment = await Comment.findByIdAndDelete({ _id: commentId });
 
   const project = await Project.findByIdAndUpdate(
     projectId,
@@ -122,7 +118,14 @@ commentController.deleteComment = catchAsync(async (req, res, next) => {
 
   await calculateCommentCount(comment.project);
 
-  return sendResponse(res, 200, true, { comment, project }, null, "Delete successful");
+  return sendResponse(
+    res,
+    200,
+    true,
+    { comment, project },
+    null,
+    "Delete successful"
+  );
 });
 
 module.exports = commentController;
