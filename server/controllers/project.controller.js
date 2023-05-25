@@ -15,32 +15,32 @@ projectController.getListProject = catchAsync(async (req, res, next) => {
 
   const filter = { isDeleted: false };
 
-  if(search) {
-    filter.name = { $regex: search, $options: "i"};
+  if (search) {
+    filter.name = { $regex: search, $options: "i" };
   }
 
   let sortOptions = {};
   switch (sortBy) {
-    case 'popular':
-      sortOptions = { totalBookmarks: -1 };
+    case "popular":
+      sortOptions = { "totalBookmarks": -1 };
       break;
-    case 'newest':
-      sortOptions = { createdAt: -1 };
+    case "newest":
+      sortOptions = { "createdAt": -1 };
       break;
-    case 'highestRaised':
-      sortOptions = { currentRaised: -1 };
+    case "highestRaised":
+      sortOptions = { "currentRaised": -1 };
       break;
-    case 'lowestRaised':
-      sortOptions = { currentRaised: 1 };
+    case "lowestRaised":
+      sortOptions = { "currentRaised": 1 };
       break;
   }
 
+  console.log("sort", sortOptions);
   const listOfProject = await Project.find(filter)
     .sort(sortOptions)
     .skip(limit * (page - 1))
     .limit(limit);
-   
-  console.log("list", listOfProject)
+
   if (!listOfProject) throw new AppError(400, "No project found");
 
   return sendResponse(
@@ -95,15 +95,14 @@ projectController.createDonation = catchAsync(async (req, res, next) => {
     userId: userId,
     amount: amount,
   });
-   
- 
+
   const notification = await Notification.create({
-     from: donation.userId,
-     to: project.creator,
-     type: 'donation',
-     message: 'You got 1 new donation, please confirm',
-     donationId: donation._id
-  })
+    from: donation.userId,
+    to: project.creator,
+    type: "donation",
+    message: "You got 1 new donation, please confirm",
+    donationId: donation._id,
+  });
   user.donations.push(donation);
   await user.save();
 
@@ -119,7 +118,6 @@ projectController.createDonation = catchAsync(async (req, res, next) => {
     "Create donation successful"
   );
 });
-
 
 // bookmark and remove bookmark
 
@@ -151,10 +149,10 @@ projectController.bookmarkProject = catchAsync(async (req, res, next) => {
     const notification = await Notification.create({
       from: userId,
       to: projectId,
-      type: 'bookmark',
-      message: 'Your project got 1 new bookmark'
-   });
-    
+      type: "bookmark",
+      message: "Your project got 1 new bookmark",
+    });
+
     return sendResponse(
       res,
       200,
@@ -187,31 +185,34 @@ projectController.bookmarkProject = catchAsync(async (req, res, next) => {
   }
 });
 
-
 // get all comments of project
 
-
-projectController.getCommentOfProject = catchAsync(async(req, res, next) => {
+projectController.getCommentOfProject = catchAsync(async (req, res, next) => {
   const projectId = req.params.projectId;
-  
+
   const project = await Project.findById(projectId, { isDeleted: false })
-   .populate({ path: 'comments', 
+    .populate({
+      path: "comments",
       populate: [
-        { path: 'author', select: 'name' },
+        { path: "author", select: "name" },
         {
-          path: 'replies',
-          populate: { path: 'author', select: 'name' },
+          path: "replies",
+          populate: { path: "author", select: "name" },
         },
-      ]
-   }).exec();
+      ],
+    })
+    .exec();
 
   if (!project) throw new AppError(400, "Project not found");
-   
-  return sendResponse(res, 200, true, project.comments, null, "Get all comments successful");
-   
+
+  return sendResponse(
+    res,
+    200,
+    true,
+    project.comments,
+    null,
+    "Get all comments successful"
+  );
 });
-
-
-
 
 module.exports = projectController;
