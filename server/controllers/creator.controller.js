@@ -10,6 +10,7 @@ const creatorController = {};
 
 creatorController.getCurrentCreator = catchAsync(async (req, res, next) => {
   const currentCreatorId = req.userId;
+  console.log("current", currentCreatorId);
 
   const creator = await Creator.findById(currentCreatorId);
   if (!creator)

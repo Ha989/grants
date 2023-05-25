@@ -9,15 +9,38 @@ const projectController = {};
 // get all list of project;
 
 projectController.getListProject = catchAsync(async (req, res, next) => {
-  let { page, limit } = req.body;
+  let { page, limit, search, sortBy } = req.query;
   page = parseInt(page) || 1;
   limit = parseInt(limit) || 10;
 
   const filter = { isDeleted: false };
+
+  if(search) {
+    filter.name = { $regex: search, $options: "i"};
+  }
+
+  let sortOptions = {};
+  switch (sortBy) {
+    case 'popular':
+      sortOptions = { totalBookmarks: -1 };
+      break;
+    case 'newest':
+      sortOptions = { createdAt: -1 };
+      break;
+    case 'highestRaised':
+      sortOptions = { currentRaised: -1 };
+      break;
+    case 'lowestRaised':
+      sortOptions = { currentRaised: 1 };
+      break;
+  }
+
   const listOfProject = await Project.find(filter)
+    .sort(sortOptions)
     .skip(limit * (page - 1))
     .limit(limit);
-
+   
+  console.log("list", listOfProject)
   if (!listOfProject) throw new AppError(400, "No project found");
 
   return sendResponse(

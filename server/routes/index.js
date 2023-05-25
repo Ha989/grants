@@ -20,7 +20,7 @@ router.use("/creator", creatorApi);
 
 // project.api
 const projectApi = require('./project.api');
-router.use("/project", projectApi);
+router.use("/projects", projectApi);
 
 // commnent.api
 const commentApi = require('./comment.api');

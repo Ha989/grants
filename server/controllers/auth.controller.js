@@ -78,7 +78,6 @@ authController.verifyEmail = catchAsync(async (req, res, next) => {
   if (!user && !creator) throw new AppError(400, "Invalid user");
 
   const verifiedcode = await Verify.find({ code: verified });
-  console.log("verify", verifiedcode);
 
   if (!verifiedcode) throw new AppError(400, "Invalid verification link");
 
@@ -108,7 +107,7 @@ authController.loginwithEmail = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email }, "+password");
   const creator = await Creator.findOne({ email }, "+password");
-  // console.log("creator", creator)
+
   if (!user && !creator) throw new AppError(400, "Invalid User", "Login Error");
 
   let isMatch;
