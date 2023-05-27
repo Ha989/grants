@@ -58,7 +58,7 @@ projectController.getListProject = catchAsync(async (req, res, next) => {
 projectController.getSingleProject = catchAsync(async (req, res, next) => {
   const projectId = req.params.projectId;
 
-  const singleProject = await Project.findById(projectId);
+  const singleProject = await Project.findById(projectId).populate('creator');
   if (!singleProject)
     throw new AppError(
       400,
