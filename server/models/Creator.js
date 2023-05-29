@@ -55,10 +55,16 @@ creatorSchema.methods.toJSON = function () {
   };
   
   creatorSchema.methods.generateToken = async function () {
-    const accessToken = await jwt.sign({ _id: this._id }, JWT_SECRET_KEY, {
-      expiresIn: "1d",
-    });
-    return accessToken;
+    try {
+        const accessToken = await jwt.sign({ _id: this._id }, JWT_SECRET_KEY, {
+          expiresIn: "1d",
+        });
+        return accessToken;
+      } catch (error) {
+        // Handle the error appropriately (e.g., log, throw, or return an error response)
+        console.error("Error generating token:", error);
+        throw error;
+      }
   };
 
 const Creator = mongoose.model("creators", creatorSchema);

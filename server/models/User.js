@@ -37,7 +37,7 @@ const userSchema = Schema({
     }],
     donations: [{
         type: Schema.Types.ObjectId,
-        ref: "donation",
+        ref: "donations",
         default: null
     }],
     isVerified: {
@@ -61,10 +61,16 @@ userSchema.methods.toJSON = function () {
   };
 
   userSchema.methods.generateToken = async function () {
-    const accessToken = await jwt.sign({ _id: this._id }, JWT_SECRET_KEY, {
-      expiresIn: "1d",
-    });
-    return accessToken;
+    try {
+        const accessToken = await jwt.sign({ _id: this._id }, JWT_SECRET_KEY, {
+          expiresIn: "1d",
+        });
+        return accessToken;
+      } catch (error) {
+        // Handle the error appropriately (e.g., log, throw, or return an error response)
+        console.error("Error generating token:", error);
+        throw error;
+      }
   };
 
 const User = mongoose.model("users", userSchema);

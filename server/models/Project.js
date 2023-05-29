@@ -52,6 +52,10 @@ const projectSchema = Schema({
         ref: "donations",
         default: null
     }],
+    totalDonations: {
+        type: Number,
+        default: 0
+    },
     userBookmarked: [{
         type: Schema.Types.ObjectId,
         ref: "users"

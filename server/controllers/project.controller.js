@@ -35,19 +35,20 @@ projectController.getListProject = catchAsync(async (req, res, next) => {
       break;
   }
 
-  console.log("sort", sortOptions);
   const listOfProject = await Project.find(filter)
     .sort(sortOptions)
     .skip(limit * (page - 1))
     .limit(limit);
-
+  
+    const count = await Project.count(filter);
+    const totalPage = Math.ceil(count / limit)
   if (!listOfProject) throw new AppError(400, "No project found");
 
   return sendResponse(
     res,
     200,
     true,
-    { projects: listOfProject, page: page },
+    { projects: listOfProject, page: page, totalPage: totalPage },
     null,
     "Get Projects Success"
   );
@@ -125,7 +126,7 @@ projectController.bookmarkProject = catchAsync(async (req, res, next) => {
   const userId = req.userId;
   const projectId = req.params.projectId;
 
-  const user = await User.findById(userId);
+  const user = await User.findById(userId).populate("projects");
   if (!user) throw new AppError(400, "User not found", "Bookmark error");
 
   let project = await Project.findById(projectId);

@@ -12,11 +12,11 @@ router.use("/auth", authApi);
 
 // user.api
 const userApi = require('./user.api');
-router.use("/user", userApi);
+router.use("/users", userApi);
 
 // creator.api
 const creatorApi = require('./creator.api');
-router.use("/creator", creatorApi);
+router.use("/creators", creatorApi);
 
 // project.api
 const projectApi = require('./project.api');
@@ -24,7 +24,7 @@ router.use("/projects", projectApi);
 
 // commnent.api
 const commentApi = require('./comment.api');
-router.use("/comment", commentApi);
+router.use("/comments", commentApi);
 
 
 // notification.api

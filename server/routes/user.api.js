@@ -39,7 +39,7 @@ authentication.loginRequired,
 @access Login Required
 */
 
-router.get("/donation", authentication.loginRequired, userController.getDonationsOfUser);
+router.get("/donations", authentication.loginRequired, userController.getDonationsOfUser);
 
 
 

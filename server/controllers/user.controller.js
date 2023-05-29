@@ -50,11 +50,14 @@ userController.updateProfile = catchAsync(async(req, res, next) => {
 // get list donated money to projects of user 
 userController.getDonationsOfUser = catchAsync(async(req, res, next) => {
   const currentUserId = req.userId;
-
   const user = await User.findById(currentUserId);
   if (!user) throw new AppError(400, "User not found", "Get donations list error");
-
-  const donations = await Donation.find({ userId: currentUserId }).populate('userId');
+  
+  const donations = await Donation.find({ userId: currentUserId })
+  .populate('userId')
+  .populate('projectId')
+  ;
+  console.log(donations);
   if(!donations) throw new AppError(400, "Unauthorized");
 
   return sendResponse(res, 200, true, { donations }, null, "Get donations list successful");

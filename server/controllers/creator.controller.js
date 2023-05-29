@@ -193,19 +193,23 @@ creatorController.confirmDonation = catchAsync(async (req, res, next) => {
 
   if (project.creator.toString() !== creatorId)
     throw new AppError(403, "Forbidden");
-
+  const options = { new: true };
   donation.isConfirm = true;
   await donation.save();
-  project.currentRaised += donation.amount;
-  await project.save();
+  project = await Project.findByIdAndUpdate(projectId, {
+    $addToSet: { currentRaised: currentRaised + donation.amount },
+    $inc: { totalDonations: +1}
+  }, options).populate('donations')
+  // project.currentRaised += donation.amount;
+  // await project.save();
 
   const notification = await Notification.create({
     from: projectId.creator,
     to: donation.userId,
-    type: 'donation',
-    message: 'Your donation has been confirmed',
-    donationId: donationId
- })
+    type: "donation",
+    message: "Your donation has been confirmed",
+    donationId: donationId,
+  });
 
   return sendResponse(
     res,

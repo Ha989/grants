@@ -6,6 +6,7 @@ const User = require("../models/User");
 const Creator = require("../models/Creator");
 const Verify = require("../models/Verify");
 const emailVerification = require("../middlewares/emailVerification");
+const { send } = require("process");
 
 const authController = {};
 
@@ -138,6 +139,31 @@ authController.loginwithEmail = catchAsync(async (req, res, next) => {
     null,
     "Login successful"
   );
+});
+
+
+authController.getCurrentUser = catchAsync(async (req, res, next) => {
+   const currentUserId = req.userId;
+   const creator = await Creator.findById(currentUserId);
+   console.log("creator",creator);
+   const user = await User.findById(currentUserId);
+   console.log("user", user);
+   if (!user && !creator) throw new AppError(400, "Not found");
+   return sendResponse(res, 200, true, { creator, user }, null, "success");
+    
+  //  if (currentUserId.role === 'creator') {
+  //   const creator = await Creator.findById(currentUserId);
+  //   console.log('creator', creator);
+  //   if (!creator) throw new AppError(400, "Creator not found");
+  //   return sendResponse(res, 200, true, { creator }, null, 'get creator success')
+  // };
+  // if (currentUserId.role === 'user') {
+  //   let user  = await User.findById(currentUserId);
+  //   console.log('user', user)
+  //   if (!user) throw new AppError(400, 'user not found');
+  //   return sendResponse(res, 200, true, { user }, null, 'get creator success')
+  // };
+  
 });
 
 module.exports = authController;
