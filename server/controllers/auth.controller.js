@@ -67,8 +67,6 @@ authController.register = catchAsync(async (req, res, next) => {
   await sendResponse(res, 200, true, { user }, null, "Register Successfully");
 });
 
-
-
 authController.verifyEmail = catchAsync(async (req, res, next) => {
   const verified = req.params.code;
   const userId = req.params.id;
@@ -82,8 +80,8 @@ authController.verifyEmail = catchAsync(async (req, res, next) => {
 
   if (!verifiedcode) throw new AppError(400, "Invalid verification link");
 
-  if ( Date.now() > verifiedcode.expiryTime) {
-    throw new AppError(410, "Verification link has expired")
+  if (Date.now() > verifiedcode.expiryTime) {
+    throw new AppError(410, "Verification link has expired");
   }
 
   if (user) {
@@ -141,29 +139,13 @@ authController.loginwithEmail = catchAsync(async (req, res, next) => {
   );
 });
 
-
 authController.getCurrentUser = catchAsync(async (req, res, next) => {
-   const currentUserId = req.userId;
-   const creator = await Creator.findById(currentUserId);
-   console.log("creator",creator);
-   const user = await User.findById(currentUserId);
-   console.log("user", user);
-   if (!user && !creator) throw new AppError(400, "Not found");
-   return sendResponse(res, 200, true, { creator, user }, null, "success");
-    
-  //  if (currentUserId.role === 'creator') {
-  //   const creator = await Creator.findById(currentUserId);
-  //   console.log('creator', creator);
-  //   if (!creator) throw new AppError(400, "Creator not found");
-  //   return sendResponse(res, 200, true, { creator }, null, 'get creator success')
-  // };
-  // if (currentUserId.role === 'user') {
-  //   let user  = await User.findById(currentUserId);
-  //   console.log('user', user)
-  //   if (!user) throw new AppError(400, 'user not found');
-  //   return sendResponse(res, 200, true, { user }, null, 'get creator success')
-  // };
-  
+  const currentUserId = req.userId;
+  const creator = await Creator.findById(currentUserId);
+  const user = await User.findById(currentUserId);
+  if (!user && !creator) throw new AppError(400, "Not found");
+  return sendResponse(res, 200, true, { creator, user }, null, "success");
+
 });
 
 module.exports = authController;
