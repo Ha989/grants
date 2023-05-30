@@ -42,5 +42,15 @@ authentication.loginRequired,
 router.get("/donations", authentication.loginRequired, userController.getDonationsOfUser);
 
 
+/**
+ @route GET /bookmarked
+ @description get user bookmarked
+ @body
+ @access Login required
+ */
+
+router.get("/bookmarks", authentication.loginRequired, userController.getBookmarksOfUser);
+
+
 
 module.exports = router;

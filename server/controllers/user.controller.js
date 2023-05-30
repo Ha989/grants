@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const Donation = require("../models/Donation");
 const { sendResponse, AppError, catchAsync } = require("../helpers/utils");
+const Project = require("../models/Project");
 
 const userController = {};
 
@@ -75,11 +76,28 @@ userController.getDonationsOfUser = catchAsync(async(req, res, next) => {
   .limit(limit);
 
 
+  const count = await Donation.countDocuments(filter);
+  const totalPage = Math.ceil(count / limit);
+
   console.log(donations);
   if(!donations) throw new AppError(400, "Unauthorized");
 
-  return sendResponse(res, 200, true, { donations }, null, "Get donations list successful");
+  return sendResponse(res, 200, true, { donations, totalPage: totalPage }, null, "Get donations list successful");
   });
 
+
+userController.getBookmarksOfUser = catchAsync(async(req, res, next) => {
+  const currentUserId = req.userId;
+
+  const user = await User.findById(currentUserId).select('bookmarked');
+  if (!user) throw new AppError(400, "User not found", "Get donations list error");
+  
+  const bookmarkedProjectIds = user.bookmarked;
+
+  const bookmarkedProjects = await Project.find({ _id: { $in: bookmarkedProjectIds } });
+  
+  sendResponse(res, 200, true, { bookmarkedProjects }, null, "Get bookmark of current user success")
+
+});
 
 module.exports = userController;

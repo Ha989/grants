@@ -22,16 +22,16 @@ projectController.getListProject = catchAsync(async (req, res, next) => {
   let sortOptions = {};
   switch (sortBy) {
     case "popular":
-      sortOptions = { "totalBookmarks": -1 };
+      sortOptions = { totalBookmarks: -1 };
       break;
     case "newest":
-      sortOptions = { "createdAt": -1 };
+      sortOptions = { createdAt: -1 };
       break;
     case "highestRaised":
-      sortOptions = { "currentRaised": -1 };
+      sortOptions = { currentRaised: -1 };
       break;
     case "lowestRaised":
-      sortOptions = { "currentRaised": 1 };
+      sortOptions = { currentRaised: 1 };
       break;
   }
 
@@ -39,9 +39,9 @@ projectController.getListProject = catchAsync(async (req, res, next) => {
     .sort(sortOptions)
     .skip(limit * (page - 1))
     .limit(limit);
-  
-    const count = await Project.count(filter);
-    const totalPage = Math.ceil(count / limit)
+
+  const count = await Project.count(filter);
+  const totalPage = Math.ceil(count / limit);
   if (!listOfProject) throw new AppError(400, "No project found");
 
   return sendResponse(
@@ -59,7 +59,7 @@ projectController.getListProject = catchAsync(async (req, res, next) => {
 projectController.getSingleProject = catchAsync(async (req, res, next) => {
   const projectId = req.params.projectId;
 
-  const singleProject = await Project.findById(projectId).populate('creator');
+  const singleProject = await Project.findById(projectId).populate("creator");
   if (!singleProject)
     throw new AppError(
       400,
@@ -126,7 +126,7 @@ projectController.bookmarkProject = catchAsync(async (req, res, next) => {
   const userId = req.userId;
   const projectId = req.params.projectId;
 
-  const user = await User.findById(userId).populate("projects");
+  const user = await User.findById(userId);
   if (!user) throw new AppError(400, "User not found", "Bookmark error");
 
   let project = await Project.findById(projectId);
