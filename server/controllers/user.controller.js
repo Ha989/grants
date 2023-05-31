@@ -34,7 +34,7 @@ userController.updateProfile = catchAsync(async(req, res, next) => {
     let user = await User.findById(userId);
     if (!user) throw new AppError(400, "User not found", "Update profile error");
 
-    const allowList = [ "name", "avatartUrl", "bio" ];
+    const allowList = [ "name", "avatarUrl", "bio" ];
 
     allowList.forEach((field) => {
         if (req.body[field] !== undefined) {
