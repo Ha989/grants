@@ -41,7 +41,8 @@ projectController.getSingleProject
 router.post("/:projectId/donation/:userId", 
 authentication.loginRequired,
 validators.validate([
-    param("userId").exists().isString().custom(validators.checkObjectId)
+    param("userId").exists().isString().custom(validators.checkObjectId),
+    param("projectId").exists().isString().custom(validators.checkObjectId)
 ]),
 projectController.createDonation
 );
@@ -54,10 +55,11 @@ projectController.createDonation
 @access Login required
 */
 
-router.put("/:projectId/bookmark", 
+router.put("/:projectId/bookmark/:userId", 
 authentication.loginRequired,
 validators.validate([
-   param("projectId").exists().isString().custom(validators.checkObjectId) 
+   param("projectId").exists().isString().custom(validators.checkObjectId),
+   param("userId").exists().isString().custom(validators.checkObjectId) 
 ]),
 projectController.bookmarkProject);
 

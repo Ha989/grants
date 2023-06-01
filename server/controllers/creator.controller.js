@@ -54,7 +54,7 @@ creatorController.updateProfile = catchAsync(async (req, res, next) => {
 // create project
 creatorController.createProject = catchAsync(async (req, res, next) => {
   const creatorId = req.params.creatorId;
-  const { name, title, description, website, team, logo, banner, bankDetail } =
+  const { name, title, description, website, team, logo, video, banner, bankDetail } =
     req.body;
   const creator = await Creator.findById(creatorId);
   if (!creator)
@@ -68,6 +68,7 @@ creatorController.createProject = catchAsync(async (req, res, next) => {
     team,
     logo,
     banner,
+    video,
     bankDetail,
     creator: creatorId,
   });

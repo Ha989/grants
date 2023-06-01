@@ -81,7 +81,7 @@ projectController.getSingleProject = catchAsync(async (req, res, next) => {
 
 projectController.createDonation = catchAsync(async (req, res, next) => {
   const { projectId, userId } = req.params;
-  const { amount } = req.body;
+  const  {amount} = req.body;
 
   let user = await User.findById(userId);
   if (!user) throw new AppError(400, "user not found", "create donation error");

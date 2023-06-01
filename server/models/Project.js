@@ -22,6 +22,10 @@ const projectSchema = Schema({
         type: String,
         default: null
     },
+    video: {
+        type: String,
+        default: null
+    },
     team: {
         type: [],
         default: null
@@ -76,7 +80,11 @@ const projectSchema = Schema({
     isDeleted: {
         type: Boolean,
         default: false
-    },   
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+      }
 },
 {
     timeStamp: true

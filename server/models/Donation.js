@@ -20,7 +20,11 @@ const donationSchema = Schema({
     isConfirm: {
         type: Boolean,
         default: false
-    }
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+      }
 }, 
 {
     timeStamp: true
