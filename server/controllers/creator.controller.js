@@ -80,7 +80,7 @@ creatorController.createProject = catchAsync(async (req, res, next) => {
 // update project detail
 
 creatorController.updateProject = catchAsync(async (req, res, next) => {
-  const currentCreatorId = req.userId;
+  const currentCreatorId = req.params.creatorId;
   const projectId = req.params.projectId;
 
   const creator = await Creator.findById(currentCreatorId);
@@ -171,6 +171,25 @@ creatorController.deleteProject = catchAsync(async (req, res, next) => {
   );
 });
 
+// get single donation
+
+creatorController.getSingleDonation = catchAsync(async(req, res, next) => {
+  const creatorId = req.userId;
+  const donationId = req.params.donationId;
+
+  let creator = await Creator.findById(creatorId);
+
+  if (!creator)
+    throw new AppError(400, "Creator not found", "Confirm donation error");
+
+  let donation = await Donation.findById(donationId).populate("projectId").populate("userId");
+
+  if (!donation)
+    throw new AppError(400, "Donation not found", "Confirm donation error");
+
+  sendResponse(res, 200, true, { donation }, null, "Get Single Donation Success" )
+});
+
 // confirm donation
 
 creatorController.confirmDonation = catchAsync(async (req, res, next) => {
@@ -188,7 +207,7 @@ creatorController.confirmDonation = catchAsync(async (req, res, next) => {
     throw new AppError(400, "Donation not found", "Confirm donation error");
 
   const projectId = donation.projectId;
-  const project = await Project.findById(projectId);
+  let project = await Project.findById(projectId);
   if (!project)
     throw new AppError(400, "Project not found", "Confirm donation error");
 
@@ -197,8 +216,14 @@ creatorController.confirmDonation = catchAsync(async (req, res, next) => {
   const options = { new: true };
   donation.isConfirm = true;
   await donation.save();
+
+  let currentRaised = project.currentRaised || 0;
+  console.log("currentRaised", currentRaised)
+  let updatedRaised = currentRaised + donation.amount;
+  console.log("update", updatedRaised);
+
   project = await Project.findByIdAndUpdate(projectId, {
-    $addToSet: { currentRaised: currentRaised + donation.amount },
+    currentRaised: updatedRaised,
     $inc: { totalDonations: +1}
   }, options).populate('donations')
   // project.currentRaised += donation.amount;
@@ -239,7 +264,8 @@ creatorController.getDonationByProjectCreator = catchAsync(
 
     const donations = await Donation.find({
       projectId: { $in: projectIds },
-    }).populate("projectId");
+    }).populate("projectId")
+    .populate("userId");
 
     return sendResponse(
       res,

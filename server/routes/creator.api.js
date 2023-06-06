@@ -41,7 +41,7 @@ creatorController.updateProfile
 router.post("/:creatorId/create",
 authentication.loginRequired,
 validators.validate([
-    param("creatorId").exists().isString().custom(validators.checkObjectId)
+  param("creatorId").exists().isString().custom(validators.checkObjectId)
 ]),
 creatorController.createProject
 );
@@ -86,7 +86,7 @@ creatorController.deleteProject
 @access Login required
 */
 
-router.put("/donation/:donationId", 
+router.put("/donations/:donationId", 
 authentication.loginRequired,
 validators.validate([
   param("donationId").exists().isString().custom(validators.checkObjectId)
@@ -94,16 +94,29 @@ validators.validate([
 creatorController.confirmDonation
 );
 
+/**
+@route GET /donation/:donationId
+@description get single donation
+@body
+@access Login required
+*/
+
+router.get("/donations/:donationId",
+authentication.loginRequired,
+validators.validate([
+  param("donationId").exists().isString().custom(validators.checkObjectId)
+]),
+creatorController.getSingleDonation)
 
 /**
-@route GET /creator/donation
+@route GET /creator/donations
 @description get all donations
 @body { isConfirm: true or false }
 @access Login required
 */
 
 
-router.get("/donation", authentication.loginRequired, creatorController.getDonationByProjectCreator);
+router.get("/donations", authentication.loginRequired, creatorController.getDonationByProjectCreator);
 
 
 

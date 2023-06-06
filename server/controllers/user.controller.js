@@ -53,7 +53,7 @@ userController.getDonationsOfUser = catchAsync(async(req, res, next) => {
   const currentUserId = req.userId;
   let { page, limit, status } = req.query;
   page = parseInt(page) || 1;
-  limit = parseInt(limit) || 10;
+  limit = parseInt(limit) || 5;
 
   const user = await User.findById(currentUserId);
   if (!user) throw new AppError(400, "User not found", "Get donations list error");
@@ -72,6 +72,7 @@ userController.getDonationsOfUser = catchAsync(async(req, res, next) => {
   const donations = await Donation.find(filter)
   .populate('userId')
   .populate('projectId')
+  .sort({ createdAt: -1 })
   .skip((page - 1) * limit)
   .limit(limit);
 

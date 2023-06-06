@@ -11,7 +11,7 @@ const projectController = {};
 projectController.getListProject = catchAsync(async (req, res, next) => {
   let { page, limit, search, sortBy } = req.query;
   page = parseInt(page) || 1;
-  limit = parseInt(limit) || 10;
+  limit = parseInt(limit) || 6;
 
   const filter = { isDeleted: false };
 
