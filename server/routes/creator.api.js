@@ -46,7 +46,14 @@ validators.validate([
 creatorController.createProject
 );
 
+/**
+@route GET /project/:projectId
+@description get all projects by creator
+@body
+@access Login required
+ */
 
+router.get("/projects", authentication.loginRequired, creatorController.getProjectsByCreator)
 /**
 @route PUT /project/:projectId
 @description update project

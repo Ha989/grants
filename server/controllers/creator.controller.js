@@ -10,7 +10,6 @@ const creatorController = {};
 
 creatorController.getCurrentCreator = catchAsync(async (req, res, next) => {
   const currentCreatorId = req.userId;
-  console.log("current", currentCreatorId);
 
   const creator = await Creator.findById(currentCreatorId);
   if (!creator)
@@ -76,6 +75,23 @@ creatorController.createProject = catchAsync(async (req, res, next) => {
   await creator.save();
   sendResponse(res, 200, true, { project }, null, "Create project successful");
 });
+
+// get all projects by creator
+
+creatorController.getProjectsByCreator = catchAsync(async(req, res, next) => {
+  const creatorId = req.userId;
+
+  const creator = await Creator.findById(creatorId);
+
+  if (!creator)
+    throw new AppError(400, "Creator not found", "update project error");
+  
+  const projects = await Project.find({ creator: creatorId });
+  if (!projects) throw new AppError(403, "Unauthorized");
+  
+  sendResponse(res, 200, true, projects, null, "Get projects successfully" )
+});
+
 
 // update project detail
 
