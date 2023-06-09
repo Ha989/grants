@@ -59,7 +59,16 @@ projectController.getListProject = catchAsync(async (req, res, next) => {
 projectController.getSingleProject = catchAsync(async (req, res, next) => {
   const projectId = req.params.projectId;
 
-  const singleProject = await Project.findById(projectId).populate("creator");
+  const singleProject = await Project.findById(projectId)
+  .populate("creator")
+  .populate({
+    path: "comments",
+    populate: {
+      path: "replies",
+      model: "comments"
+    }
+  });
+
   if (!singleProject)
     throw new AppError(
       400,

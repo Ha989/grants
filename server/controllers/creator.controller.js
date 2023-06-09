@@ -86,7 +86,7 @@ creatorController.getProjectsByCreator = catchAsync(async(req, res, next) => {
   if (!creator)
     throw new AppError(400, "Creator not found", "update project error");
   
-  const projects = await Project.find({ creator: creatorId });
+  const projects = await Project.find({ creator: creatorId, "isDeleted": false});
   if (!projects) throw new AppError(403, "Unauthorized");
   
   sendResponse(res, 200, true, projects, null, "Get projects successfully" )
@@ -96,7 +96,7 @@ creatorController.getProjectsByCreator = catchAsync(async(req, res, next) => {
 // update project detail
 
 creatorController.updateProject = catchAsync(async (req, res, next) => {
-  const currentCreatorId = req.params.creatorId;
+  const currentCreatorId = req.userId;
   const projectId = req.params.projectId;
 
   const creator = await Creator.findById(currentCreatorId);
@@ -120,6 +120,7 @@ creatorController.updateProject = catchAsync(async (req, res, next) => {
     "logo",
     "banner",
     "website",
+    "video",
     "bankDetail",
   ];
 
@@ -129,12 +130,12 @@ creatorController.updateProject = catchAsync(async (req, res, next) => {
       filteredBody[field] = req.body[field];
     }
   });
-  if (Object.keys(req.body).includes("team")) {
-    const currentTeam = project.team;
-    const newTeam = [...currentTeam, req.body.team];
+  // if (Object.keys(req.body).includes("team")) {
+  //   const currentTeam = project.team;
+  //   const newTeam = [...currentTeam, req.body.team];
 
-    filteredBody = { ...req.body, team: newTeam };
-  }
+  //   filteredBody = { ...req.body, team: newTeam };
+  // }
 
   await project.updateOne(filteredBody);
 
@@ -144,7 +145,7 @@ creatorController.updateProject = catchAsync(async (req, res, next) => {
     true,
     { project },
     null,
-    "Update project successful"
+    "Update project successfully"
   );
 });
 

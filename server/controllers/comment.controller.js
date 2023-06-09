@@ -41,12 +41,15 @@ commentController.createComment = catchAsync(async (req, res, next) => {
     await parentCom.save();
   }
 
-  // add to project
-  project = await Project.findByIdAndUpdate(
-    projectId,
-    { $push: { comments: comment } },
-    { new: true }
-  );
+  // add to project . If no parentId push as comment. 
+  if (!parentId) {
+      project = await Project.findByIdAndUpdate(
+      projectId,
+      { $push: { comments: comment } },
+      { new: true }
+    );
+  }
+ 
 
   const notification = await Notification.create({
     from: currentUserId,

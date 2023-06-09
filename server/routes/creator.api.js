@@ -61,7 +61,7 @@ router.get("/projects", authentication.loginRequired, creatorController.getProje
 @access Login required
  */
 
-router.put("/project/:projectId",  
+router.put("/projects/:projectId",  
   authentication.loginRequired,
   validators.validate([
     param("projectId").exists().isString().custom(validators.checkObjectId)
@@ -76,7 +76,7 @@ creatorController.updateProject
 @access Login required
  */
 
-router.delete("/project/:projectId",  
+router.delete("/projects/:projectId",  
   authentication.loginRequired,
   validators.validate([
     param("projectId").exists().isString().custom(validators.checkObjectId)
