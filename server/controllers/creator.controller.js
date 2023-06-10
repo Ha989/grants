@@ -53,8 +53,17 @@ creatorController.updateProfile = catchAsync(async (req, res, next) => {
 // create project
 creatorController.createProject = catchAsync(async (req, res, next) => {
   const creatorId = req.params.creatorId;
-  const { name, title, description, website, team, logo, video, banner, bankDetail } =
-    req.body;
+  const {
+    name,
+    title,
+    description,
+    website,
+    team,
+    logo,
+    video,
+    banner,
+    bankDetail,
+  } = req.body;
   const creator = await Creator.findById(creatorId);
   if (!creator)
     throw new AppError(400, "Creator not found", "Create project error");
@@ -78,20 +87,37 @@ creatorController.createProject = catchAsync(async (req, res, next) => {
 
 // get all projects by creator
 
-creatorController.getProjectsByCreator = catchAsync(async(req, res, next) => {
+creatorController.getProjectsByCreator = catchAsync(async (req, res, next) => {
   const creatorId = req.userId;
 
   const creator = await Creator.findById(creatorId);
 
   if (!creator)
     throw new AppError(400, "Creator not found", "update project error");
-  
-  const projects = await Project.find({ creator: creatorId, "isDeleted": false});
-  if (!projects) throw new AppError(403, "Unauthorized");
-  
-  sendResponse(res, 200, true, projects, null, "Get projects successfully" )
-});
 
+  const projects = await Project.find({
+    creator: creatorId,
+    isDeleted: false,
+  })
+    .populate("donations")
+    .populate({
+      path: "donations",
+      populate: {
+        path: "userId",
+        model: "users",
+      },
+    })
+    .populate({
+      path: "donations",
+      populate: {
+        path: "projectId",
+        model: "projects",
+      },
+    });
+  if (!projects) throw new AppError(403, "Unauthorized");
+
+  sendResponse(res, 200, true, projects, null, "Get projects successfully");
+});
 
 // update project detail
 
@@ -190,7 +216,7 @@ creatorController.deleteProject = catchAsync(async (req, res, next) => {
 
 // get single donation
 
-creatorController.getSingleDonation = catchAsync(async(req, res, next) => {
+creatorController.getSingleDonation = catchAsync(async (req, res, next) => {
   const creatorId = req.userId;
   const donationId = req.params.donationId;
 
@@ -199,12 +225,21 @@ creatorController.getSingleDonation = catchAsync(async(req, res, next) => {
   if (!creator)
     throw new AppError(400, "Creator not found", "Confirm donation error");
 
-  let donation = await Donation.findById(donationId).populate("projectId").populate("userId");
+  let donation = await Donation.findById(donationId)
+    .populate("projectId")
+    .populate("userId");
 
   if (!donation)
     throw new AppError(400, "Donation not found", "Confirm donation error");
 
-  sendResponse(res, 200, true, { donation }, null, "Get Single Donation Success" )
+  sendResponse(
+    res,
+    200,
+    true,
+    { donation },
+    null,
+    "Get Single Donation Success"
+  );
 });
 
 // confirm donation
@@ -235,14 +270,18 @@ creatorController.confirmDonation = catchAsync(async (req, res, next) => {
   await donation.save();
 
   let currentRaised = project.currentRaised || 0;
-  console.log("currentRaised", currentRaised)
-  let updatedRaised = currentRaised + donation.amount;
-  console.log("update", updatedRaised);
 
-  project = await Project.findByIdAndUpdate(projectId, {
-    currentRaised: updatedRaised,
-    $inc: { totalDonations: +1}
-  }, options).populate('donations')
+  let updatedRaised = currentRaised + donation.amount;
+
+
+  project = await Project.findByIdAndUpdate(
+    projectId,
+    {
+      currentRaised: updatedRaised,
+      $inc: { totalDonations: +1 },
+    },
+    options
+  ).populate("donations");
   // project.currentRaised += donation.amount;
   // await project.save();
 
@@ -281,8 +320,9 @@ creatorController.getDonationByProjectCreator = catchAsync(
 
     const donations = await Donation.find({
       projectId: { $in: projectIds },
-    }).populate("projectId")
-    .populate("userId");
+    })
+      .populate("projectId")
+      .populate("userId");
 
     return sendResponse(
       res,
