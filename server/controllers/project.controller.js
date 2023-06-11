@@ -64,9 +64,20 @@ projectController.getSingleProject = catchAsync(async (req, res, next) => {
   .populate({
     path: "comments",
     populate: {
+      path: "author",
+      model: "users",
+    },
+  })
+  .populate({
+    path: "comments",
+    populate: {
       path: "replies",
-      model: "comments"
-    }
+      populate: {
+        path: "author",
+        model: "users",
+
+      },
+    },
   });
 
   if (!singleProject)
