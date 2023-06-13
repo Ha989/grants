@@ -60,25 +60,24 @@ projectController.getSingleProject = catchAsync(async (req, res, next) => {
   const projectId = req.params.projectId;
 
   const singleProject = await Project.findById(projectId)
-  .populate("creator")
-  .populate({
-    path: "comments",
-    populate: {
-      path: "author",
-      model: "users",
-    },
-  })
-  .populate({
-    path: "comments",
-    populate: {
-      path: "replies",
+    .populate("creator")
+    .populate({
+      path: "comments",
       populate: {
         path: "author",
         model: "users",
-
       },
-    },
-  });
+    })
+    .populate({
+      path: "comments",
+      populate: {
+        path: "replies",
+        populate: {
+          path: "author",
+          model: "users",
+        },
+      },
+    });
 
   if (!singleProject)
     throw new AppError(
@@ -101,7 +100,7 @@ projectController.getSingleProject = catchAsync(async (req, res, next) => {
 
 projectController.createDonation = catchAsync(async (req, res, next) => {
   const { projectId, userId } = req.params;
-  const  {amount} = req.body;
+  const { amount } = req.body;
 
   let user = await User.findById(userId);
   if (!user) throw new AppError(400, "user not found", "create donation error");

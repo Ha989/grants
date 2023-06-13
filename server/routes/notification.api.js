@@ -13,11 +13,11 @@ const validators = require("../middlewares/validators");
 @access Login required
 */
 
-router.get("/:userId", 
+router.get("/", 
 authentication.loginRequired,
-validators.validate([
-    param("userId").exists().isString().custom(validators.checkObjectId)
-]),
+// validators.validate([
+//     param("userId").exists().isString().custom(validators.checkObjectId)
+// ]),
 notificationController.getAllNotifications
 );
 
