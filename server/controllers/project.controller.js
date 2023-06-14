@@ -119,6 +119,8 @@ projectController.createDonation = catchAsync(async (req, res, next) => {
   const notification = await Notification.create({
     from: donation.userId,
     to: project.creator,
+    senderModel: 'users',
+    recipientModel: 'creators',
     type: "donation",
     message: "You got 1 new donation, please confirm",
     donationId: donation._id,
@@ -168,9 +170,9 @@ projectController.bookmarkProject = catchAsync(async (req, res, next) => {
 
     const notification = await Notification.create({
       from: userId,
-      to: projectId,
+      to: project.creator,
       type: "bookmark",
-      message: "Your project got 1 new bookmark",
+      message: `Your project ${project.name} got 1 new bookmark`,
     });
 
     return sendResponse(

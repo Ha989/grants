@@ -53,7 +53,7 @@ commentController.createComment = catchAsync(async (req, res, next) => {
 
   const notification = await Notification.create({
     from: currentUserId,
-    to: projectId,
+    to: project.creator,
     type: "comment",
     message: `${currentUserId.name} mentioned you in a comment`,
   });
