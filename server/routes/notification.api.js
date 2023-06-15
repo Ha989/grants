@@ -15,11 +15,31 @@ const validators = require("../middlewares/validators");
 
 router.get("/", 
 authentication.loginRequired,
-// validators.validate([
-//     param("userId").exists().isString().custom(validators.checkObjectId)
-// ]),
 notificationController.getAllNotifications
 );
 
+/**
+@route PUT /:notificationId 
+@description update notification as read
+@body
+@access Login required
+*/
+
+router.put("/", 
+authentication.loginRequired,
+notificationController.updateNotifications
+);
+
+/**
+@route GET /new
+@description update notification as read
+@body
+@access Login required
+*/
+
+router.get("/new", 
+authentication.loginRequired,
+notificationController.getNewNotifications
+);
 
 module.exports = router;

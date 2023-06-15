@@ -55,7 +55,7 @@ commentController.createComment = catchAsync(async (req, res, next) => {
     from: currentUserId,
     to: project.creator,
     type: "comment",
-    message: `${currentUserId.name} mentioned you in a comment`,
+    message: `Your project ${project.name} got a new comment`,
   });
 
   await calculateCommentCount(projectId);
