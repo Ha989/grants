@@ -11,16 +11,17 @@ const notificationController = {};
 notificationController.getAllNotifications = catchAsync(
   async (req, res, next) => {
     const currentUserId = req.userId;
-    const { limit, skip } = req.query; // Get limit and skip values from query parameters
+    let { limit, page } = req.query; // Get limit and skip values from query parameters
 
     // Convert limit and skip values to numbers
-    const limitValue = parseInt(limit, 10);
-    const skipValue = parseInt(skip, 10);
+    limit = parseInt(limit) || 10;
+    page = parseInt(page) || 1;
+    const offset = limit * (page - 1);
 
     const notifications = await Notification.find({ to: currentUserId })
       .sort({ createdAt: -1 })
-      .skip(skipValue)
-      .limit(limitValue)
+      .skip(offset)
+      .limit(limit)
       .populate({
         path: "donationId",
         populate: {
@@ -28,6 +29,9 @@ notificationController.getAllNotifications = catchAsync(
           model: "projects",
         },
       });
+
+    const count = await Notification.count(notifications);
+    const totalPage = Math.ceil(count / limit);
 
     if (!notifications) {
       throw new AppError(
@@ -41,7 +45,7 @@ notificationController.getAllNotifications = catchAsync(
       res,
       200,
       true,
-      { notifications },
+      { notifications, totalPage },
       null,
       "Get notification successful"
     );
