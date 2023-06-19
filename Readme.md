@@ -40,6 +40,10 @@ Grants is a platform to help startup to build their community grant.
 - A User can update their comment
 - A User can delete their comment
 
+## Bookmark
+- A User can add bookmark project which they like
+- A User can remove a bookmark project
+
 ## Notifications
 
 - A User/Creator can see their history of notifications
