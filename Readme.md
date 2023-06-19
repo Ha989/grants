@@ -19,7 +19,7 @@ Grants is a platform to help startup to build their community grant.
 
 - A Creator can create new project
 - A Creator can update their project detail information (Description, Team member, Upload Logo, Banner, pitch video,..)
-- A Creator can confirm the amount of money user donated is recieved or not
+- A Creator can confirm the amount of money user donated received
 - A Creator can see the amount and users who donated to their project
 - A Creator can see the list of donations
 - A Creator can edit/delete their projects
