@@ -209,7 +209,7 @@ Grants is a platform to help startup to build their community grant.
 
 ```
 @route POST /:projectId/bookmark/:userId
-@description bookmark project which user like
+@description bookmark/remove bookmark project which user like
 @body { projectId, userId }
 @access Login required
 ```
