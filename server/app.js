@@ -34,7 +34,7 @@ app.use((req, res, next) => {
 
 
 app.use((req, res, next) => {
-    res.header('http://localhost:3000');
+    res.header('https://grants-2023.netlify.app/');
     next();
   });
 
