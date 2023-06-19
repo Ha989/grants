@@ -15,7 +15,7 @@ Grants is a platform to help startup to build their community grant.
 - A User can see the project which they bookmarked
 - A User can see the project which they donated
 
-## Admins
+## Creators
 
 - A Creator can create new project
 - A Creator can update their project detail information (Description, Team member, Upload Logo, Banner, pitch video,..)
@@ -23,6 +23,8 @@ Grants is a platform to help startup to build their community grant.
 - A Creator can see the amount and users who donated to their project
 - A Creator can see the list of donations
 - A Creator can edit/delete their projects
+- A Creator can update their profile Avatar, Password, Bio
+- A Creator can see their revenue raised and revenue chart by total in montly and by each projects
 
 ## Projects
 
@@ -112,7 +114,7 @@ Grants is a platform to help startup to build their community grant.
 */
 ```
 
-## Admin APIs
+## Creator APIs
 
 ```
 /**
@@ -247,6 +249,37 @@ Grants is a platform to help startup to build their community grant.
 @access Login required
 */
 ```
+
+## Notifications
+
+
+```
+/**
+@route GET /:userId
+@description get all the notification with current user
+@body
+@access Login required
+*/
+```
+```
+/**
+@route PUT /:notificationId 
+@description update notification as read
+@body
+@access Login required
+*/
+```
+
+```
+/**
+@route GET /new
+@description update notification as read
+@body
+@access Login required
+*/
+```
+
+
 
 ## Summary
 
