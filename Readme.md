@@ -17,10 +17,12 @@ Grants is a platform to help startup to build their community grant.
 
 ## Admins
 
-- An Admin can create new project
-- An Admin can update their project detail information (Description, Team member, Social Link, Roadmap, Milestone archive)
-- An Admin can confirm the amount of money user donated is recieved or not
-- An Admin can see the amount and users who donated to their project
+- A Creator can create new project
+- A Creator can update their project detail information (Description, Team member, Upload Logo, Banner, pitch video,..)
+- A Creator can confirm the amount of money user donated is recieved or not
+- A Creator can see the amount and users who donated to their project
+- A Creator can see the list of donations
+- A Creator can edit/delete their projects
 
 ## Projects
 
@@ -36,9 +38,10 @@ Grants is a platform to help startup to build their community grant.
 - A User can update their comment
 - A User can delete their comment
 
-## Reactions
+## Notifications
 
-- A User can react like(bookmarked) to a project
+- A User/Creator can see their history of notifications
+- A User/Creator can see alert the new notifications 
 
 # API Endpoints
 
@@ -50,6 +53,15 @@ Grants is a platform to help startup to build their community grant.
 @route POST auth/login
 @description Login with email and password
 @body { email, password }
+@access public
+*/
+```
+
+```
+/**
+@route POST auth/register
+@description Register new user
+@body { email, password, user role }
 @access public
 */
 ```
@@ -68,24 +80,24 @@ Grants is a platform to help startup to build their community grant.
 
 ```
 /**
-@route POST /register
-@description Register new user
-@body { email, password, user role }
-@access public
-*/
-```
-
-```
-/**
 @route PUT /users/settings/:userId
 @description Update user profile
 @body { name, avatar, password }
 @access Login required
 */
 ```
+
+/**
+@route GET /users/me
+@description get user informations
+@body 
+@access Login required
+*/
+```
+
 ```
 /**
-@route GET /users/bookmarked/:userId
+@route GET /users/bookmarks
 @description Get bookmark project
 @body 
 @access Login required
@@ -93,7 +105,7 @@ Grants is a platform to help startup to build their community grant.
 ```
 ```
 /**
-@route GET /users/donated/:userId
+@route GET /users/donations
 @description Get donated project
 @body 
 @access Login required
@@ -104,17 +116,17 @@ Grants is a platform to help startup to build their community grant.
 
 ```
 /**
-@route POST /admin/project
+@route POST /creators/:creatorId/create
 @description create a new project
-@body { name, description, social link, website, team, roadmap, }
+@body { name, description, logo, banner, website, team, video, bankDetail }
 @access Login required
 */
 ```
 
 ```
 /**
-@route PUT /admin/project/:projectId
-@description update detail of the project
+@route PUT /creators/projects/:projectId
+@description edit detail of the project
 @body { description, social link, team, roadmap, }
 @access Login required
 */
@@ -122,17 +134,26 @@ Grants is a platform to help startup to build their community grant.
 
 ```
 /**
-@route POST /admin/donation/:donationId
+@route DELETE /creators/projects/:projectId
+@description delete single project
+@body 
+@access Login required
+*/
+```
+
+```
+/**
+@route PUT /creators/donations/:donationId
 @description confirm money received from user
-@body { status: pending or received }
+@body { status: "isConfirm": true/false }
 @access Login required
 */
 ```
 
 ```
 /**
-@route GET /admin/donation
-@description get a list of donation
+@route GET /creators/donations
+@description get a list of donations
 @body 
 @access Login required
 */
@@ -140,8 +161,8 @@ Grants is a platform to help startup to build their community grant.
 
 ```
 /**
-@route GET /admin/donations/pending
-@description get a list of pending donation
+@route GET /creators/projects
+@description get a list of projects
 @body 
 @access Login required
 */
@@ -149,11 +170,13 @@ Grants is a platform to help startup to build their community grant.
 
 ```
 /**
-@route GET /admin/donations/received
-@description get a list of received donation
+@route GET /creators/me
+@description get creator information
 @body 
 @access Login required
 */
+```
+
 ```
 
 ### Project APIs
@@ -185,15 +208,14 @@ Grants is a platform to help startup to build their community grant.
 */
 ```
 
-## Reactions
 
 ## Comments APIs
 
 ```
 /**
 @route POST /comments
-@description create a new comment
-@body { content, projectId }
+@description create/reply a new comment
+@body { content, image, projectId, userId }
 @access Login required
 */
 ```
@@ -201,20 +223,12 @@ Grants is a platform to help startup to build their community grant.
 ```
 /**
 @route PUT /comments/:commentId
-@description update a comment
+@description edit a comment
 @body 
 @access Login required
 */
 ```
 
-```
-/**
-@route GET /comments/:projectId
-@description get detail of comments
-@body 
-@access Login required
-*/
-```
 ```
 /**
 @route DELETE /comments/:commentId
@@ -227,13 +241,12 @@ Grants is a platform to help startup to build their community grant.
 
 ```
 /**
-@route POST /bookmarked
-@description bookmarked a project user like
-@body { projectId }
+@route POST /:projectId/bookmark/:userId
+@description bookmark project which user like
+@body { projectId, userId }
 @access Login required
 */
 ```
-
 
 ## Summary
 
@@ -242,4 +255,4 @@ Grants is a platform to help startup to build their community grant.
 - Design endpoint APIs
 - Entinity Relationship Diagram
 - Backend target 2 weeks
-- Frontend target 1 weeks
+- Frontend target 3 weeks
