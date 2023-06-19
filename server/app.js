@@ -34,12 +34,12 @@ app.use((req, res, next) => {
 
 
 app.use((req, res, next) => {
-    res.header('https://grants-2023.netlify.app/');
+    res.header('https://main-grants-2023.netlify.app/');
     next();
   });
 
 app.use((err, req, res, next) => {
-    console.log("ERROR", err);
+    console.log("ERROR", err)
       return sendResponse(
         res,
         err.statusCode ? err.statusCode : 500,
