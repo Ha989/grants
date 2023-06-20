@@ -13,7 +13,6 @@ notificationController.getAllNotifications = catchAsync(
     const currentUserId = req.userId;
     let { limit, page } = req.query; // Get limit and skip values from query parameters
 
-    // Convert limit and skip values to numbers
     limit = parseInt(limit) || 10;
     page = parseInt(page) || 1;
     const offset = limit * (page - 1);

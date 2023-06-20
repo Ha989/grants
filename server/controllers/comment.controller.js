@@ -91,6 +91,10 @@ commentController.updateSingleComment = catchAsync(async (req, res, next) => {
       "Comment not found or user not authorized",
       "Update comment error"
     );
+  
+    if (comment.author.toString() !== currentUserId) {
+      throw new AppError(403, "You are not authorized to perform this action");
+    }
 
   return sendResponse(res, 200, true, comment, null, "Update successful");
 });
