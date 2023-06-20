@@ -90,7 +90,7 @@ userController.getDonationsOfUser = catchAsync(async(req, res, next) => {
 userController.getBookmarksOfUser = catchAsync(async(req, res, next) => {
   const currentUserId = req.userId;
 
-  const user = await User.findById(currentUserId).select('bookmarked');
+  const user = await User.findById(currentUserId).select('bookmarked').populate('bookmarked');
   if (!user) throw new AppError(400, "User not found", "Get donations list error");
   
   const bookmarkedProjectIds = user.bookmarked;
