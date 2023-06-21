@@ -117,6 +117,11 @@ authController.loginwithEmail = catchAsync(async (req, res, next) => {
     if (!isMatch) {
       throw new AppError(400, "Wrong password", "Login Error");
     }
+
+    if (!creator.isVerified) {
+      throw new AppError(400, "Email not verified", "Login Error");
+    }
+
     accessToken = await creator.generateToken();
   }
 
@@ -124,6 +129,10 @@ authController.loginwithEmail = catchAsync(async (req, res, next) => {
     isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       throw new AppError(400, "Wrong password", "Login Error");
+    }
+
+    if (!user.isVerified) {
+      throw new AppError(400, "Email not verified", "Login Error");
     }
 
     accessToken = await user.generateToken();
