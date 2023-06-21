@@ -119,7 +119,7 @@ authController.loginwithEmail = catchAsync(async (req, res, next) => {
     }
 
     if (!creator.isVerified) {
-      throw new AppError(400, "Email not verified", "Login Error");
+      throw new AppError(400, "Email not verified. Check your email to verify", "Login Error");
     }
 
     accessToken = await creator.generateToken();
@@ -132,7 +132,7 @@ authController.loginwithEmail = catchAsync(async (req, res, next) => {
     }
 
     if (!user.isVerified) {
-      throw new AppError(400, "Email not verified", "Login Error");
+      throw new AppError(400, "Email not verified. Check your email to verify", "Login Error");
     }
 
     accessToken = await user.generateToken();
