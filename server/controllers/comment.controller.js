@@ -72,14 +72,14 @@ commentController.createComment = catchAsync(async (req, res, next) => {
 // edit comment
 
 commentController.updateSingleComment = catchAsync(async (req, res, next) => {
-  const userId = req.userId;
+  const currentUserId= req.userId;
   const commentId = req.params.commentId;
   const { content, image } = req.body;
 
   const comment = await Comment.findByIdAndUpdate(
     {
       _id: commentId,
-      author: userId,
+      author: currentUserId,
     },
     { content, image },
     { new: true }

@@ -95,7 +95,7 @@ userController.getBookmarksOfUser = catchAsync(async(req, res, next) => {
   
   const bookmarkedProjectIds = user.bookmarked;
 
-  const bookmarkedProjects = await Project.find({ _id: { $in: bookmarkedProjectIds } });
+  const bookmarkedProjects = await Project.find({ _id: { $in: bookmarkedProjectIds }, isDeleted: false });
   
   sendResponse(res, 200, true, { bookmarkedProjects }, null, "Get bookmark of current user success")
 
