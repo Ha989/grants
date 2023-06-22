@@ -17,12 +17,6 @@ Grants is a platform to help startup to build their community grant.
 
 ## Creators
 
-<<<<<<< HEAD
-- An Creator can create new project
-- An Creator can update their project detail information (Description, Team member, Social Link, Roadmap, Milestone archive)
-- An Creator can confirm the amount of money user donated is recieved or not
-- An Creator can see the amount and users who donated to their project
-=======
 - A Creator can create new project
 - A Creator can update their project detail information (Description, Team member, Upload Logo, Banner, pitch video,..)
 - A Creator can confirm the amount of money user donated received
@@ -31,7 +25,7 @@ Grants is a platform to help startup to build their community grant.
 - A Creator can edit/delete their projects
 - A Creator can update their profile Avatar, Password, Bio
 - A Creator can see their revenue raised and revenue chart by total in montly and by each projects
->>>>>>> 840e50176df7a77e663f5a91e0f7957af0177058
+
 
 ## Projects
 
@@ -61,16 +55,9 @@ Grants is a platform to help startup to build their community grant.
 ## Auth APIs
 
 ```
-<<<<<<< HEAD
-/**
-@route POST auth/register
-@description Register with email and password
-@body { email, password, role }
-=======
 @route POST auth/login
 @description Login with email and password
 @body { email, password }
->>>>>>> 840e50176df7a77e663f5a91e0f7957af0177058
 @access public
 ```
 
@@ -88,24 +75,9 @@ Grants is a platform to help startup to build their community grant.
 @access private
 ```
 
-
-```
-<<<<<<< HEAD
-/**
-@route POST auth/login
-@description Login with email and password
-@body { email, password }
-@access public
-*/
-```
-
-
 ## Users APIs
 
 ```
-/**
-=======
->>>>>>> 840e50176df7a77e663f5a91e0f7957af0177058
 @route PUT /users/settings/:userId
 @description Update user profile
 @body { name, avatar, password }
@@ -127,12 +99,7 @@ Grants is a platform to help startup to build their community grant.
 ```
 
 ```
-<<<<<<< HEAD
-/**
-@route GET /users/donation/:userId
-=======
 @route GET /users/donations
->>>>>>> 840e50176df7a77e663f5a91e0f7957af0177058
 @description Get donated project
 @body 
 @access Login required
@@ -142,35 +109,20 @@ Grants is a platform to help startup to build their community grant.
 
 
 ```
-<<<<<<< HEAD
-/**
-@route POST /creator/project
-=======
 @route POST /creators/:creatorId/create
->>>>>>> 840e50176df7a77e663f5a91e0f7957af0177058
 @description create a new project
 @body { name, description, logo, banner, website, team, video, bankDetail }
 @access Login required
 ```
 
 ```
-<<<<<<< HEAD
-/**
-@route PUT /creator/project/:projectId
-@description update detail of the project
-=======
 @route PUT /creators/projects/:projectId
 @description edit detail of the project
->>>>>>> 840e50176df7a77e663f5a91e0f7957af0177058
 @body { description, social link, team, roadmap, }
 @access Login required
 ```
 
 ```
-<<<<<<< HEAD
-/**
-@route PUT /creator/donation/:donationId
-=======
 @route DELETE /creators/projects/:projectId
 @description delete single project
 @body 
@@ -179,47 +131,28 @@ Grants is a platform to help startup to build their community grant.
 
 ```
 @route PUT /creators/donations/:donationId
->>>>>>> 840e50176df7a77e663f5a91e0f7957af0177058
 @description confirm money received from user
 @body { status: "isConfirm": true/false }
 @access Login required
 ```
 
 ```
-<<<<<<< HEAD
-/**
-@route GET /creator/donation
-@description get a list of donation
-=======
 @route GET /creators/donations
 @description get a list of donations
->>>>>>> 840e50176df7a77e663f5a91e0f7957af0177058
 @body 
 @access Login required
 ```
 
 ```
-<<<<<<< HEAD
-/**
-@route GET /creator/donations/pending
-@description get a list of pending donation
-=======
 @route GET /creators/projects
 @description get a list of projects
->>>>>>> 840e50176df7a77e663f5a91e0f7957af0177058
 @body 
 @access Login required
 ```
 
 ```
-<<<<<<< HEAD
-/**
-@route GET /creator/donations/received
-@description get a list of received donation
-=======
 @route GET /creators/me
 @description get creator information
->>>>>>> 840e50176df7a77e663f5a91e0f7957af0177058
 @body 
 @access Login required
 ```
