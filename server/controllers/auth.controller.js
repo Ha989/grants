@@ -6,7 +6,7 @@ const User = require("../models/User");
 const Creator = require("../models/Creator");
 const Verify = require("../models/Verify");
 const emailVerification = require("../middlewares/emailVerification");
-const { send } = require("process");
+// const { send } = require("process");
 
 const authController = {};
 
@@ -32,6 +32,8 @@ authController.register = catchAsync(async (req, res, next) => {
       userId: user._id,
     });
     url = `${process.env.BASE_URL}/auth/${verified.userId}/verify/${verified.code}`;
+    console.log("url", url);
+    console.log("email", emailVerification)
 
     await emailVerification.sendVerificationEmail(
       user.email,
@@ -39,6 +41,7 @@ authController.register = catchAsync(async (req, res, next) => {
       url
     );
   }
+  console.log("verify", verified)
 
   if (role === "creator") {
     user = await Creator.create({ name, email, password, role });
@@ -64,7 +67,7 @@ authController.register = catchAsync(async (req, res, next) => {
     "Verification link has sent to your email"
   );
 
-  await sendResponse(res, 200, true, { user }, null, "Register Successfully");
+  // await sendResponse(res, 200, true, { user }, null, "Register Successfully");
 });
 
 authController.verifyEmail = catchAsync(async (req, res, next) => {
