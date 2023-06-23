@@ -237,6 +237,9 @@ Grants is a platform to help startup to build their community grant.
 @access Login required
 ```
 
+### Diagram
+
+![Untitled Diagram (1)](https://github.com/Ha989/grants/assets/71451175/931452c6-a6d7-4f34-afdf-a9405b4e9050)
 
 
 ## Summary
