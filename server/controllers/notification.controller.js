@@ -2,7 +2,8 @@ const Notification = require("../models/Notification");
 const User = require("../models/User");
 const Creator = require("../models/Creator");
 const { sendResponse, AppError, catchAsync } = require("../helpers/utils");
-const nodemon = require("nodemon");
+// const nodemon = require("nodemon");
+const { ObjectId } = require('mongodb');
 
 const notificationController = {};
 
@@ -11,13 +12,15 @@ const notificationController = {};
 notificationController.getAllNotifications = catchAsync(
   async (req, res, next) => {
     const currentUserId = req.userId;
-    let { limit, page } = req.query; // Get limit and skip values from query parameters
+    let { limit, page } = req.query; 
+    // Get limit and skip values from query parameters
 
     limit = parseInt(limit) || 10;
     page = parseInt(page) || 1;
     const offset = limit * (page - 1);
-
-    const notifications = await Notification.find({ to: currentUserId })
+     
+    // const objectId = new ObjectId(currentUserId);
+    const notifications = await Notification.find({ "to": currentUserId })
       .sort({ createdAt: -1 })
       .skip(offset)
       .limit(limit)
@@ -28,9 +31,10 @@ notificationController.getAllNotifications = catchAsync(
           model: "projects",
         },
       });
-
-    const count = await Notification.count(notifications);
+    const count = await Notification.countDocuments({ "to": currentUserId });
+    console.log("count", count)
     const totalPage = Math.ceil(count / limit);
+    console.log("totalPage", totalPage)
 
     if (!notifications) {
       throw new AppError(
