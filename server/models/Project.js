@@ -39,7 +39,7 @@ const projectSchema = Schema({
         ref: "creators",
         require: true
     },
-    bankDetail: {
+    clientID: {
         type: String,
         default: null
     },

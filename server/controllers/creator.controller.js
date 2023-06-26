@@ -244,64 +244,64 @@ creatorController.getSingleDonation = catchAsync(async (req, res, next) => {
 
 // confirm donation
 
-creatorController.confirmDonation = catchAsync(async (req, res, next) => {
-  const creatorId = req.userId;
-  const donationId = req.params.donationId;
+// creatorController.confirmDonation = catchAsync(async (req, res, next) => {
+//   const creatorId = req.userId;
+//   const donationId = req.params.donationId;
 
-  let creator = await Creator.findById(creatorId);
+//   let creator = await Creator.findById(creatorId);
 
-  if (!creator)
-    throw new AppError(400, "Creator not found", "Confirm donation error");
+//   if (!creator)
+//     throw new AppError(400, "Creator not found", "Confirm donation error");
 
-  let donation = await Donation.findById(donationId).populate("projectId");
+//   let donation = await Donation.findById(donationId).populate("projectId");
 
-  if (!donation)
-    throw new AppError(400, "Donation not found", "Confirm donation error");
+//   if (!donation)
+//     throw new AppError(400, "Donation not found", "Confirm donation error");
 
-  const projectId = donation.projectId;
-  let project = await Project.findById(projectId);
-  if (!project)
-    throw new AppError(400, "Project not found", "Confirm donation error");
+//   const projectId = donation.projectId;
+//   let project = await Project.findById(projectId);
+//   if (!project)
+//     throw new AppError(400, "Project not found", "Confirm donation error");
 
-  if (project.creator.toString() !== creatorId)
-    throw new AppError(403, "Forbidden");
-  const options = { new: true };
-  donation.isConfirm = true;
-  await donation.save();
+//   if (project.creator.toString() !== creatorId)
+//     throw new AppError(403, "Forbidden");
+//   const options = { new: true };
+//   donation.isConfirm = true;
+//   await donation.save();
 
-  let currentRaised = project.currentRaised || 0;
-
-  let updatedRaised = currentRaised + donation.amount;
+//   let currentRaised = project.currentRaised || 0;
 
 
-  project = await Project.findByIdAndUpdate(
-    projectId,
-    {
-      currentRaised: updatedRaised,
-      $inc: { totalDonations: +1 },
-    },
-    options
-  ).populate("donations");
-  // project.currentRaised += donation.amount;
-  // await project.save();
+//   let updatedRaised = currentRaised + donation.amount;
 
-  const notification = await Notification.create({
-    from: projectId.creator,
-    to: donation.userId,
-    type: "donation",
-    message: "Your donation has been confirmed",
-    donationId: donationId,
-  });
+//   project = await Project.findByIdAndUpdate(
+//     projectId,
+//     {
+//       currentRaised: updatedRaised,
+//       $inc: { totalDonations: +1 },
+//     },
+//     options
+//   ).populate("donations");
+//   // project.currentRaised += donation.amount;
+//   // await project.save();
 
-  return sendResponse(
-    res,
-    200,
-    true,
-    { donation, project, notification },
-    null,
-    "Confirm success"
-  );
-});
+//   const notification = await Notification.create({
+//     from: projectId.creator,
+//     to: donation.userId,
+//     type: "donation",
+//     message: "Your donation has been confirmed",
+//     donationId: donationId,
+//   });
+
+//   return sendResponse(
+//     res,
+//     200,
+//     true,
+//     { donation, project, notification },
+//     null,
+//     "Confirm success"
+//   );
+// });
 
 // get all donations which belong to the projects of creator who is authorization
 

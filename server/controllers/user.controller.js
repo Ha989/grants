@@ -80,7 +80,6 @@ userController.getDonationsOfUser = catchAsync(async(req, res, next) => {
   const count = await Donation.countDocuments(filter);
   const totalPage = Math.ceil(count / limit);
 
-  console.log(donations);
   if(!donations) throw new AppError(400, "Unauthorized");
 
   return sendResponse(res, 200, true, { donations, totalPage: totalPage }, null, "Get donations list successful");

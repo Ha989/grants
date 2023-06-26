@@ -93,13 +93,13 @@ creatorController.deleteProject
 @access Login required
 */
 
-router.put("/donations/:donationId", 
-authentication.loginRequired,
-validators.validate([
-  param("donationId").exists().isString().custom(validators.checkObjectId)
-]),
-creatorController.confirmDonation
-);
+// router.put("/donations/:donationId", 
+// authentication.loginRequired,
+// validators.validate([
+//   param("donationId").exists().isString().custom(validators.checkObjectId)
+// ]),
+// creatorController.confirmDonation
+// );
 
 /**
 @route GET /donation/:donationId

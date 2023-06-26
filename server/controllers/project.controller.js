@@ -100,7 +100,7 @@ projectController.getSingleProject = catchAsync(async (req, res, next) => {
 
 projectController.createDonation = catchAsync(async (req, res, next) => {
   const { projectId, userId } = req.params;
-  const { amount } = req.body;
+  const { amount, status } = req.body;
 
   let user = await User.findById(userId);
   if (!user) throw new AppError(400, "user not found", "create donation error");
@@ -114,9 +114,10 @@ projectController.createDonation = catchAsync(async (req, res, next) => {
     projectId: projectId,
     userId: userId,
     amount: amount,
+    isConfirm: status
   });
 
-  const notification = await Notification.create({
+  const ProjectNotification = await Notification.create({
     from: donation.userId,
     to: project.creator,
     senderModel: 'users',
@@ -131,11 +132,33 @@ projectController.createDonation = catchAsync(async (req, res, next) => {
   project.donations.push(donation);
   await project.save();
 
+  let currentRaised = project.currentRaised || 0;
+
+  let updatedRaised = currentRaised + donation.amount;
+
+  project = await Project.findByIdAndUpdate(
+    projectId,
+    {
+      currentRaised: updatedRaised,
+      $inc: { totalDonations: +1 },
+    },
+    { new: true}
+  ).populate("donations");
+
+  
+  const UserNotification = await Notification.create({
+    from: projectId.creator,
+    to: donation.userId,
+    type: "donation",
+    message: "Your donation has been confirmed",
+    donationId: donation._id,
+  });
+
   return sendResponse(
     res,
     200,
     true,
-    { donation, project, user, notification },
+    { donation, project, user},
     null,
     "Create donation successful"
   );
