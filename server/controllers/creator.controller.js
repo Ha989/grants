@@ -62,7 +62,7 @@ creatorController.createProject = catchAsync(async (req, res, next) => {
     logo,
     video,
     banner,
-    bankDetail,
+   clientID,
   } = req.body;
   const creator = await Creator.findById(creatorId);
   if (!creator)
@@ -77,7 +77,7 @@ creatorController.createProject = catchAsync(async (req, res, next) => {
     logo,
     banner,
     video,
-    bankDetail,
+   clientID,
     creator: creatorId,
   });
   creator.projects.push(project);
@@ -147,7 +147,7 @@ creatorController.updateProject = catchAsync(async (req, res, next) => {
     "banner",
     "website",
     "video",
-    "bankDetail",
+    "clientID",
   ];
 
   let filteredBody = {};
@@ -156,12 +156,6 @@ creatorController.updateProject = catchAsync(async (req, res, next) => {
       filteredBody[field] = req.body[field];
     }
   });
-  // if (Object.keys(req.body).includes("team")) {
-  //   const currentTeam = project.team;
-  //   const newTeam = [...currentTeam, req.body.team];
-
-  //   filteredBody = { ...req.body, team: newTeam };
-  // }
 
   await project.updateOne(filteredBody);
 

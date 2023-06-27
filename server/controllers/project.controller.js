@@ -6,6 +6,8 @@ const { sendResponse, AppError, catchAsync } = require("../helpers/utils");
 
 const projectController = {};
 
+
+
 // get all list of project;
 
 projectController.getListProject = catchAsync(async (req, res, next) => {
@@ -114,14 +116,14 @@ projectController.createDonation = catchAsync(async (req, res, next) => {
     projectId: projectId,
     userId: userId,
     amount: amount,
-    isConfirm: status
+    isConfirm: status,
   });
 
   const ProjectNotification = await Notification.create({
     from: donation.userId,
     to: project.creator,
-    senderModel: 'users',
-    recipientModel: 'creators',
+    senderModel: "users",
+    recipientModel: "creators",
     type: "donation",
     message: "You got 1 new donation, please confirm",
     donationId: donation._id,
@@ -142,10 +144,9 @@ projectController.createDonation = catchAsync(async (req, res, next) => {
       currentRaised: updatedRaised,
       $inc: { totalDonations: +1 },
     },
-    { new: true}
+    { new: true }
   ).populate("donations");
 
-  
   const UserNotification = await Notification.create({
     from: projectId.creator,
     to: donation.userId,
@@ -158,7 +159,7 @@ projectController.createDonation = catchAsync(async (req, res, next) => {
     res,
     200,
     true,
-    { donation, project, user},
+    { donation, project, user },
     null,
     "Create donation successful"
   );
@@ -229,6 +230,8 @@ projectController.bookmarkProject = catchAsync(async (req, res, next) => {
     );
   }
 });
+
+
 
 // get all comments of project
 
