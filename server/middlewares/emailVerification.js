@@ -4,7 +4,8 @@ const { AppError } = require("../helpers/utils");
 
 const mailerSend = process.env.MAILER_SEND;
 const mailerPass = process.env.MAILER_PASS;
-
+console.log("mailersend", mailerSend);
+console.log("mailerPass" ,mailerPass);
 const emailVerification = {};
 
 emailVerification.sendVerificationEmail = (email, subject, text) => {
