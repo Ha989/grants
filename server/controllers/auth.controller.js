@@ -4,18 +4,16 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const User = require("../models/User");
 const Creator = require("../models/Creator");
-const Verify = require("../models/Verify");
 const emailVerification = require("../middlewares/emailVerification");
-// const { send } = require("process");
 
 const authController = {};
 
 authController.register = catchAsync(async (req, res, next) => {
-  let verified;
   let url;
   let { name, email, password, role } = req.body;
 
   let user = await User.findOne({ email, isDeleted: false });
+  console.log("user", user);
   let creator = await Creator.findOne({ email, isDeleted: false });
 
   if (user || creator)
@@ -27,13 +25,10 @@ authController.register = catchAsync(async (req, res, next) => {
   if (role === "user") {
     user = await User.create({ name, email, password, role });
 
-    verified = await Verify.create({
-      code: crypto.randomBytes(32).toString("hex"),
-      userId: user._id,
-    });
-    url = `${process.env.BASE_URL}/auth/${verified.userId}/verify/${verified.code}`;
+    const code = crypto.randomBytes(32).toString("hex"),
+      url = `${process.env.BASE_URL}/auth/${user._id}/verify/${code}`;
     console.log("url", url);
-    console.log("email", emailVerification)
+    console.log("email", emailVerification);
 
     await emailVerification.sendVerificationEmail(
       user.email,
@@ -41,16 +36,12 @@ authController.register = catchAsync(async (req, res, next) => {
       url
     );
   }
-  console.log("verify", verified)
 
   if (role === "creator") {
     user = await Creator.create({ name, email, password, role });
+    const code = crypto.randomBytes(32).toString("hex");
 
-    verified = await Verify.create({
-      code: crypto.randomBytes(32).toString("hex"),
-      creatorId: user._id,
-    });
-    url = `${process.env.BASE_URL}/auth/${verified.userId}/verify/${verified.code}`;
+    url = `${process.env.BASE_URL}/auth/${user._id}/verify/${code}`;
 
     await emailVerification.sendVerificationEmail(
       user.email,
@@ -62,30 +53,19 @@ authController.register = catchAsync(async (req, res, next) => {
     res,
     200,
     true,
-    { url, verified },
+    { url },
     null,
     "Verification link has sent to your email"
   );
-
-  // await sendResponse(res, 200, true, { user }, null, "Register Successfully");
 });
 
 authController.verifyEmail = catchAsync(async (req, res, next) => {
-  const verified = req.params.code;
   const userId = req.params.id;
 
   const user = await User.find({ _id: userId }, { isDeleted: false });
   const creator = await Creator.find({ _id: userId }, { isDeleted: false });
 
   if (!user && !creator) throw new AppError(400, "Invalid user");
-
-  const verifiedcode = await Verify.find({ code: verified });
-
-  if (!verifiedcode) throw new AppError(400, "Invalid verification link");
-
-  if (Date.now() > verifiedcode.expiryTime) {
-    throw new AppError(410, "Verification link has expired");
-  }
 
   if (user) {
     await User.updateOne({ _id: userId }, { isVerified: true });
@@ -99,7 +79,7 @@ authController.verifyEmail = catchAsync(async (req, res, next) => {
     res,
     200,
     true,
-    { verifiedcode },
+    { user, creator },
     null,
     "Email verified successfully"
   );
@@ -122,7 +102,11 @@ authController.loginwithEmail = catchAsync(async (req, res, next) => {
     }
 
     if (!creator.isVerified) {
-      throw new AppError(400, "Email not verified. Check your email to verify", "Login Error");
+      throw new AppError(
+        400,
+        "Email not verified. Check your email to verify",
+        "Login Error"
+      );
     }
 
     accessToken = await creator.generateToken();
@@ -135,7 +119,11 @@ authController.loginwithEmail = catchAsync(async (req, res, next) => {
     }
 
     if (!user.isVerified) {
-      throw new AppError(400, "Email not verified. Check your email to verify", "Login Error");
+      throw new AppError(
+        400,
+        "Email not verified. Check your email to verify",
+        "Login Error"
+      );
     }
 
     accessToken = await user.generateToken();
@@ -157,7 +145,6 @@ authController.getCurrentUser = catchAsync(async (req, res, next) => {
   const user = await User.findById(currentUserId);
   if (!user && !creator) throw new AppError(400, "Not found");
   return sendResponse(res, 200, true, { creator, user }, null, "success");
-
 });
 
 module.exports = authController;

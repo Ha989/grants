@@ -10,10 +10,7 @@ const emailVerification = {};
 emailVerification.sendVerificationEmail = (email, subject, text) => {
 
 const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false,
-    service: 'gmail',
+    service: 'Gmail',
     auth: {
         user: mailerSend,
         pass: mailerPass,
